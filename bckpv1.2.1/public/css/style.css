@@ -1,0 +1,771 @@
+/* General Body & HTML */
+html,
+body {
+    height: auto;
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #343a40;
+}
+
+/* Main Wrapper for Dashboard Layout */
+#wrapper {
+    display: flex;
+    min-height: 100vh;
+    /* overflow-x: hidden; */
+    /* Mencegah scroll horizontal yang tidak diinginkan */
+}
+
+/* Sidebar Styling */
+#sidebar-wrapper {
+    width: fit-content;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #343a40;
+    position: sticky;
+    /* Tetap sticky untuk desktop */
+    top: 110px;
+    height: fit-content;
+    /* Mengisi tinggi viewport */
+    overflow-y: hidden;
+    /* Scroll jika konten sidebar melebihi tinggi */
+    transition: margin-left 0.3s ease-in-out;
+    /* Animasi saat toggle */
+    box-shadow: 1px 0 5px rgba(0, 0, 0, 0.08);
+    /* Sedikit bayangan di tepi */
+    z-index: 1030;
+    /* Z-index untuk sidebar agar di atas konten (kecuali navbar) */
+    flex-shrink: 0;
+    /* Mencegah sidebar menyusut */
+    border-right: 1px solid #e9ecef;
+    /* Garis pemisah */
+}
+
+#sidebar-wrapper .sidebar-brand {
+    padding: 1.5rem 1rem;
+    font-size: 1.75rem;
+    font-weight: bold;
+    border-bottom: 1px solid #e9ecef;
+    color: #343a40;
+}
+
+#sidebar-wrapper .sidebar-brand .bi {
+    color: #007bff;
+}
+
+#sidebar-wrapper .sidebar-divider {
+    border-top: 1px solid #e9ecef;
+    margin: 0.5rem 0;
+}
+
+#sidebar-wrapper ul.nav {
+    padding: 0;
+    padding-top: 0.5rem;
+}
+
+#sidebar-wrapper .nav-item {
+    margin-bottom: 0.25rem;
+    padding: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#sidebar-wrapper .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.45rem 1rem;
+    color: #495057;
+    border-radius: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.2s ease-in-out;
+}
+
+#sidebar-wrapper .nav-link i {
+    margin-right: .5rem;
+    font-size: 1.1rem;
+}
+
+#sidebar-wrapper .nav-link:hover {
+    background-color: #e9ecef;
+    color: #007bff;
+}
+
+#sidebar-wrapper .nav-link.active {
+    background-color: #007bff;
+    color: #ffffff !important;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+}
+
+#sidebar-wrapper .nav-link.active i {
+    color: #ffffff;
+}
+
+/* Page Content Wrapper (konten utama di sebelah sidebar) */
+#page-content-wrapper {
+    flex-grow: 1;
+    /* Akan mengisi sisa ruang yang tersedia */
+    width: 100%;
+    /* Penting untuk responsivitas */
+    background-color: #f4f6f9;
+    display: flex;
+    /* Mengatur layout vertikal untuk navbar, konten, footer */
+    flex-direction: column;
+    /* min-height: 100vh; */
+    /* Memastikan page-content-wrapper minimal setinggi viewport */
+}
+
+/* Container untuk konten utama di dalam page-content-wrapper */
+#page-content-wrapper .container-fluid {
+    padding: 1.5rem !important;
+    /* Memberi padding di semua sisi */
+    flex-grow: 1;
+    /* Konten utama akan mengisi sisa ruang vertikal, mendorong footer ke bawah */
+}
+
+/* Top Navbar Styling */
+.navbar {
+    padding: 0.75rem 2rem;
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    z-index: 1040;
+    /* Pastikan navbar di atas sidebar */
+    position: sticky;
+    /* Agar tetap di atas saat scroll */
+    top: 0;
+}
+
+.navbar .navbar-brand {
+    color: #2c3e50;
+    font-weight: bold;
+    display: none;
+    /* Sembunyikan di desktop */
+}
+
+a.btn-sm {
+    position: relative;
+    z-index: 99;
+}
+
+@media (max-width: 991px) {
+    .navbar {
+        padding: 0.75rem 2rem;
+    }
+
+    /* Untuk ukuran layar mobile */
+    .navbar .navbar-brand {
+        display: block;
+        /* Tampilkan di mobile */
+        margin-left: 0.5rem;
+    }
+
+    .navbar .btn-primary.d-md-none {
+        display: block !important;
+    }
+
+    /* Table */
+    .table-responsive table.table {
+        border: 0;
+    }
+
+    .table-responsive table.table thead {
+        display: none;
+        /* Hide the table header */
+    }
+
+    .table-responsive table.table,
+    .table-responsive table.table tbody,
+    .table-responsive table.table tr,
+    .table-responsive table.table td {
+        display: block;
+        /* Make table elements block-level */
+        width: 100%;
+    }
+
+    .table-responsive table.table tr {
+        margin-bottom: 0.625rem;
+        /* Add some space between rows */
+        border: 1px solid #dee2e6;
+        /* Add a border to differentiate rows */
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+    }
+
+    .table-responsive table.table td {
+        text-align: left;
+        padding-left: 50%;
+        /* Make space for the data-label */
+        position: relative;
+        border: none;
+        line-break: anywhere;
+        /* Remove individual cell borders */
+    }
+
+    .table-responsive table.table td::before {
+        content: attr(data-label);
+        /* Display the data-label as content */
+        position: absolute;
+        left: 0.5rem;
+        width: calc(46% - 1rem);
+        /* Adjust width to fit */
+        padding-right: 0.5rem;
+        text-align: left;
+        font-weight: bold;
+        white-space: nowrap;
+        /* Prevent label from wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Adjust specific columns or hide them if not needed on mobile */
+    .table-responsive table.table td:nth-of-type(1)::before {
+        /* content: "Nama Pengguna"; */
+    }
+
+    .table-responsive table.table td:nth-of-type(2)::before {
+        /* content: "Email"; */
+    }
+
+    .table-responsive table.table td:nth-of-type(3)::before {
+        /* content: "Username"; */
+    }
+
+    .table-responsive table.table td:nth-of-type(4)::before {
+        /* content: "Role"; */
+    }
+
+    .table-responsive table.table td:nth-of-type(5)::before {
+        /* content: "Aksi"; */
+    }
+}
+
+@media (max-width: 767px) {
+    .navbar {
+        padding: 0.75rem 1rem;
+    }
+}
+
+.navbar .form-control {
+    border-radius: 0.5rem;
+    border-color: #dee2e6;
+    background-color: #f8f9fa;
+    padding-left: 2rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 0.75rem center;
+    background-size: 1rem;
+}
+
+.navbar .form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    border-color: #80bdff;
+}
+
+.navbar .form-control+.btn-outline-success {
+    display: none;
+}
+
+.navbar .nav-link i {
+    font-size: 1.25rem;
+    color: #6c757d;
+}
+
+.navbar .nav-link:hover i {
+    color: #007bff;
+}
+
+.navbar .dropdown-toggle::after {
+    display: none;
+}
+
+.navbar .dropdown-menu {
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border: 1px solid #dee2e6;
+}
+
+.navbar .dropdown-item {
+    color: #343a40;
+}
+
+.navbar .dropdown-item:hover {
+    background-color: #e9ecef;
+    color: #007bff;
+}
+
+/* Dashboard Cards Styling */
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.card .card-body {
+    padding: 1.5rem;
+    /* max-width: 780px; */
+}
+
+.card h6.text-uppercase {
+    font-size: 0.8rem;
+    letter-spacing: 0.05rem;
+    font-weight: 600;
+    color: #6c757d !important;
+}
+
+.card h4.fw-bold {
+    font-size: 2.2rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+    color: #343a40;
+}
+
+.card small {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* Custom Card Colors */
+.card-income {
+    background-color: #5560e2;
+    color: #ffffff;
+}
+
+.card-income .bi {
+    color: #ffffff !important;
+}
+
+.card-income h6.text-uppercase {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.card-income small {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.card-expenses {
+    background-color: #52c7f1;
+    color: #ffffff;
+}
+
+.card-expenses .bi {
+    color: #ffffff !important;
+}
+
+.card-expenses h6.text-uppercase {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.card-expenses small {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.card-cash {
+    background-color: #a450a8;
+    color: #ffffff;
+}
+
+.card-cash .bi {
+    color: #ffffff !important;
+}
+
+.card-cash h6.text-uppercase {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.card-cash small {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.card-profit {
+    background-color: #72ca66;
+    color: #ffffff;
+}
+
+.card-profit .bi {
+    color: #ffffff !important;
+}
+
+.card-profit h6.text-uppercase {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.card-profit small {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Table Styling for Technician Incomes */
+.table {
+    margin-bottom: 0;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.table thead.table-light th {
+    background-color: #f8f9fa;
+    color: #495057;
+    border-bottom: 1px solid #dee2e6;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Footer Styling */
+.footer {
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.03);
+    padding: 1rem 0;
+    /* Padding vertikal */
+    margin-top: auto;
+    /* Penting untuk menempel ke bawah jika konten kurang */
+}
+
+
+/* Responsive Adjustments */
+@media (min-width: 768px) {
+
+    /* Untuk desktop dan tablet (>768px) */
+    #sidebar-wrapper {
+        margin-left: 0;
+        /* Sidebar terlihat */
+        position: sticky;
+        /* Tetap di posisi saat scroll */
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        /* Jika toggled di desktop, sembunyikan */
+        margin-left: -260px;
+    }
+}
+
+@media (max-width: 991px) {
+
+    /* Untuk mobile (<768px) */
+    #sidebar-wrapper {
+        margin-right: -260px;
+        /* Sembunyikan sidebar secara default */
+        position: fixed;
+        /* Penting agar sidebar melayang di atas konten */
+        height: 96vh;
+        border-radius: 0;
+        z-index: 1030;
+        right: 0;
+        top: 60px;
+        justify-content: space-between;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-right: 0;
+        /* Tampilkan sidebar saat toggled */
+    }
+
+    #page-content-wrapper {
+        /* min-width: auto; */
+        /* Pastikan konten mengisi lebar viewport */
+        overflow-x: hidden;
+        /* Hindari scroll horizontal saat sidebar tersembunyi */
+    }
+
+    /* Overlay untuk saat sidebar terbuka */
+    #wrapper.toggled #page-content-wrapper::before {
+        content: '';
+        position: fixed;
+        /* Gunakan fixed agar menutupi seluruh viewport */
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        /* Overlay gelap */
+        z-index: 1025;
+        /* Di atas konten tapi di bawah sidebar */
+    }
+}
+
+/* H1 on content area */
+.display-4 {
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+/* H2 for sections */
+h2.mb-4 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #343a40;
+}
+
+/* Custom Styles */
+#page-content-wrapper nav .container-fluid {
+    padding: 0 !important;
+}
+
+.icon-red {
+    display: flex;
+    justify-content: center;
+}
+
+li.account::marker {
+    display: none !important;
+}
+
+.dropdown-menu.show {
+    position: absolute !important;
+    inset: auto 0px 0px auto !important;
+    margin: 10px !important;
+    transform: translate3d(0px, 54px, 0px);
+    top: 0 !important;
+    height: fit-content;
+}
+
+table.dataTable {
+    width: 100%;
+}
+
+
+.card-db {
+    max-width: 48%;
+    width: 100%;
+    height: 100%;
+    max-height: 420px;
+
+}
+
+.bi-whatsapp::before {
+    width: 18px;
+    height: 18px;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.dropdown-arrow {
+    font-size: 20px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.show .dropdown-arrow {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease-in-out;
+}
+
+#wrapper {}
+
+#sidebar-wrapper {
+    background-color: #ffffff;
+    border-right: 1px solid #dee2e6;
+}
+
+#page-content-wrapper {
+    flex: 1;
+}
+
+/* Header */
+.desktop-notification.show {
+    transform: translate3d(0px, 56px, 0px) !important;
+    right: 0 !important;
+}
+
+
+
+/* Manajemen Pengguna */
+.body-manajemen {
+    max-width: 100% !important;
+}
+
+.table-responsive {
+    overflow-x: hidden !important;
+}
+
+table.dataTable {
+    width: 100% !important;
+}
+
+
+/* Customers */
+.text-success,
+.text-danger {
+    display: flex;
+    justify-content: center;
+}
+
+#customersTableBody .not-found,
+#usersTableBody .not-found,
+#paymentsTableBody td.not-found {
+    padding-left: 0 !important;
+    width: 100% !important;
+}
+
+#customersTableBody .not-found .alert,
+#usersTableBody .not-found .alert,
+#paymentsTableBody .not-found .alert {
+    text-align: center;
+    width: 100% !important;
+}
+
+table th a {
+    color: #212529 !important;
+    text-decoration: none !important;
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
+
+
+@media (max-width: 1440px) {}
+
+@media (max-width: 1366px) {}
+
+@media (max-width: 1200px) {}
+
+@media (max-width: 991px) {
+    .dropdown-menu.show {
+        /* transform: translate3d(0px, -58px, 0px) !important; */
+    }
+}
+
+@media (max-width: 768px) {
+
+    /* Header */
+    .mobile-user.show {
+        transform: translate3d(0px, -118px, 0px) !important;
+        width: 100%;
+        margin: 0 !important;
+    }
+
+    .card-db {
+        max-width: 100%;
+    }
+
+    .notification-badge {
+        transform: translate(6px, 4px) !important;
+        top: 0 !important;
+        right: 0 !important;
+        border-radius: 20px !important;
+        background: red;
+        color: #fff !important;
+        font-size: 10px !important;
+        padding: 4px !important;
+        min-width: 18px;
+    }
+
+    .notification-dropdown.show {
+        transform: translate3d(78px, 52px, 0px) !important;
+        top: 0 !important;
+        height: fit-content;
+        right: 0 !important;
+    }
+
+    /* Manage Users */
+    table.dataTable>tbody>tr.child ul.dtr-details {
+        font-size: 12px;
+    }
+
+    table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before,
+    table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
+        content: "+" !important;
+    }
+
+    table.dataTable.dtr-inline.collapsed>tbody>tr.parent>td.dtr-control:before,
+    table.dataTable.dtr-inline.collapsed>tbody>tr.parent>th.dtr-control:before {
+        content: "-" !important;
+    }
+
+    #paginationControls>.pagination-custom>div {
+        display: flex;
+        gap: 20px;
+        flex-direction: column-reverse !important;
+    }
+
+    #paginationControls>.pagination-custom>div>div {
+        display: flex;
+        flex-direction: row !important;
+    }
+
+    .table-responsive table.table td {
+        /* text-align: left !important; */
+        padding-left: 110px !important;
+        position: relative;
+        border: none;
+        font-size: 12px !important;
+        line-break: anywhere;
+        display: flex;
+        align-items: center;
+    }
+
+    .table-responsive table.table tr#customer td {
+        /* text-align: left !important; */
+        padding-left: 130px !important;
+        position: relative;
+        border: none;
+        font-size: 12px !important;
+        line-break: anywhere;
+        display: flex;
+        align-items: center;
+    }
+
+    .table>:not(caption)>*>* {
+        padding: .2rem .5rem !important;
+    }
+
+    /* .bi::before,
+    [class^="bi-"]::before,
+    [class*=" bi-"]::before {
+        font-size: 12px !important;
+    } */
+
+    /* table thead {
+        display: none;
+    } */
+
+    /* Manage Payment */
+    .table-responsive table.table #paymentsTableBody td {
+        /* text-align: left !important; */
+        padding-left: 140px !important;
+    }
+
+    .table-responsive table.table #paymentsTableBody td.not-found {
+        padding-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .table-responsive.manage-user table.table #incomesTableBody td {
+        padding-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .text-success,
+    .text-danger {
+        display: flex;
+        justify-content: start;
+    }
+}
+
+@media (min-width: 767px) and (max-width:991px) {
+    .table-responsive table.table tr {
+        width: 48% !important;
+    }
+
+    .table>tbody {
+        display: flex !important;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 576px) {}
+
+/* .account .dropdown-toggle::after {
+    display: none;
+} */

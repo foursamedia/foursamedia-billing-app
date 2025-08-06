@@ -1,0 +1,19 @@
+# File: public/.htaccess
+# Pastikan modul headers diaktifkan di Apache (biasanya sudah default)
+<IfModule mod_headers.c>
+    # Hapus header X-Requested-With jika sudah ada (untuk menghindari duplikasi atau konflik)
+    RequestHeader unset X-Requested-With
+
+    # Setel ulang header X-Requested-With dari nilai yang diterima
+    # '%{HTTP:X-Requested-With}s' mengambil nilai header dari permintaan masuk
+    # 'env=REDIRECT_HTTP_X_REQUESTED_WITH' memastikan Apache meneruskannya ke PHP
+    RequestHeader set X-Requested-With "%{HTTP:X-Requested-With}s" env=REDIRECT_HTTP_X_REQUESTED_WITH
+</IfModule>
+
+# Opsional: Jika Anda menggunakan URL rapi (clean URLs) dan semua request diarahkan ke sebuah index.php
+# Maka pastikan bagian ini ada dan benar sesuai struktur project Anda
+# RewriteEngine On
+# RewriteBase /path/to/your/project/public/ # Sesuaikan jika diperlukan
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteRule ^(.*)$ index.php [L]
