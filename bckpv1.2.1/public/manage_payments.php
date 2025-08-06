@@ -328,22 +328,18 @@ require_once '../includes/header.php';
 						<div class="input-group">
 							<span class="input-group-text">Sampai Tanggal</span>
 							<input type="date" class="form-control" id="endDateInput" name="end_date" value="<?php echo htmlspecialchars($_GET['end_date'] ?? ''); ?>">
-						</div>
-						
+						</div>			
 					</div>
-
 					<button type="button" id="resetFilterBtn" class="btn btn-secondary flex-shrink-0">
 						<i class="bi bi-arrow-counterclockwise"></i> Reset
 					</button>
 					<a href="#" id="exportExcelBtn" class="btn btn-success flex-shrink-0">
-						<i class="bi bi-file-earmark-excel"></i> Export Excel
-					</a>
+						<i class="bi bi-file-earmark-excel"></i> Export Excel </a>					
 			</div>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="table-responsive">
             <table id="paymentsTable" class="table table-striped table-bordered">
                 <thead>
@@ -352,7 +348,7 @@ require_once '../includes/header.php';
                         <th data-label="Pelanggan">Pelanggan</th>
                         <th data-label="Jumlah">Jumlah</th>
                         <th data-label="Tanggal Pembayaran">Tanggal Pembayaran</th>
-						<th data-label="Tanggal Pembayaran">Input Pembayaran</th>
+			<th data-label="Tanggal Pembayaran">Input Pembayaran</th>
                         <th data-label="Deskripsi">Deskripsi</th>
                         <th data-label="Diinput Oleh">Diinput Oleh</th>
                         <th data-label="Aksi">Aksi</th>
@@ -368,7 +364,7 @@ require_once '../includes/header.php';
                                 <td data-label="Pelanggan"><?php echo htmlspecialchars($payment['customer_name']); ?></td>
                                 <td data-label="Jumlah">Rp<?php echo number_format($payment['amount'], 0, ',', '.'); ?></td>
                                 <td data-label="Tanggal Pembayaran"><?php echo htmlspecialchars($payment['payment_date']); ?></td>
-								 <td data-label="Input Pembayaran"><?php echo htmlspecialchars($payment['input_record_date']); ?></td>
+				<td data-label="Input Pembayaran"><?php echo htmlspecialchars($payment['input_record_date']); ?></td>
                                 <td data-label="Deskripsi"><?php echo htmlspecialchars($payment['description']); ?></td>
                                 <td data-label="Diinput Oleh">
                                     <?php
@@ -469,15 +465,11 @@ if (file_exists('../includes/footer.php')) {
 ?>
 
 <script>
-
 const exportExcelBtn = document.getElementById('exportExcelBtn');
 const startDateInput = document.getElementById('startDateInput'); // NEW
 const endDateInput = document.getElementById('endDateInput'); // NEW
 const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
 
-    /**
-     * Updates the export Excel button's href based on the current search query.
-     */
     function updateExportLink() {
     const currentSearchQuery = searchInput.value;
     const currentStartDate = startDateInput.value; // NEW
@@ -502,10 +494,8 @@ const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
         exportExcelBtn.href = exportUrl;
     }
 }
-
     // Call updateExportLink initially when the page loads
     updateExportLink();
-
     // Modify the searchInput event listener to also update the export link
 		searchInput.addEventListener('input', function() {
 		clearTimeout(searchTimeout);
@@ -518,8 +508,6 @@ const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
 		}, 300);
 	});
 
-
-
     document.addEventListener('DOMContentLoaded', function() {
         const paymentsTableBody = document.getElementById('paymentsTableBody');
         const paginationControlsDiv = document.getElementById('paginationControls');
@@ -528,13 +516,7 @@ const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
 
         let searchTimeout;
 
-        /**
-         * Loads payment data via AJAX based on current page, search query, and limit.
-         * @param {number} page - The page number to load.
-         * @param {string} searchQuery - The search string.
-         * @param {number} limit - The number of items per page.
-         */
-		function loadPayments(page = 1, searchQuery = '', limit = <?php echo $limit_per_page; ?>, startDate = '', endDate = '') { // ADD startDate, endDate
+	function loadPayments(page = 1, searchQuery = '', limit = <?php echo $limit_per_page; ?>, startDate = '', endDate = '') { // ADD startDate, endDate
 			// Add a loading indicator to the table body
 			paymentsTableBody.innerHTML = `<tr><td colspan="7" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div> Memuat data...</td></tr>`;
 			// Disable pagination controls during load
@@ -592,8 +574,7 @@ const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
 					paginationControlsDiv.querySelectorAll('.page-link, #limitPerPage').forEach(el => el.removeAttribute('disabled'));
 				}
 			});
-		}
-		
+		}		
 		// Event listener for Reset Filter button
 			if (resetFilterBtn) { // Check if the button exists
 				resetFilterBtn.addEventListener('click', function() {
@@ -605,12 +586,7 @@ const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
 					loadPayments(1, '', <?php echo $limit_per_page; ?>, '', '');
 					updateExportLink(); // Update export link after reset
 				});
-			}
-
-
-        /**
-         * Attaches or re-attaches event listeners to dynamically loaded elements.
-         */
+			}     
         function attachEventListeners() {
             // Re-attach listeners for pagination links
             document.querySelectorAll('#paginationControls .page-link').forEach(link => {
@@ -624,12 +600,8 @@ const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
                 currentLimitSelect.removeEventListener('change', handleLimitChange);
                 currentLimitSelect.addEventListener('change', handleLimitChange);
             }
-        }
-		
-		/**
-		 * Handles click events on the Reset Filter button.
-		 */
-		function handleResetFilterClick() {
+        }		
+	function handleResetFilterClick() {
 			searchInput.value = ''; // Clear general search input
 			startDateInput.value = ''; // Clear start date input
 			endDateInput.value = ''; // Clear end date input
@@ -637,12 +609,7 @@ const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
 			// Reload payments with no search/date parameters (resetting to default page 1)
 			loadPayments(1, '', <?php echo $limit_per_page; ?>, '', '');
 			updateExportLink(); // Update export link after reset
-		}
-
-        /**
-         * Handles click events on pagination links.
-         * @param {Event} e - The click event object.
-         */
+		}     
         function handlePageClick(e) {
 			e.preventDefault();
 			const newPage = parseInt(this.dataset.page);
@@ -654,11 +621,7 @@ const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
 			if (!isNaN(newPage) && newPage > 0) {
 				loadPayments(newPage, currentSearchQuery, currentLimit, currentStartDate, currentEndDate); // MODIFIED
 			}
-		}
-
-        /**
-         * Handles change events on the "items per page" select dropdown.
-         */
+		}    
         function handleLimitChange() {
 			const newLimit = parseInt(this.value);
 			const currentSearchQuery = searchInput.value;
@@ -691,9 +654,7 @@ const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
 			updateExportLink(); // NEW
 		}
         // --- END NEW ADDITION ---
-		
-		
-		// Event listeners for date inputs
+	// Event listeners for date inputs
 		startDateInput.addEventListener('change', function() { // Use 'change' for date inputs
 			const currentSearchQuery = searchInput.value;
 			const currentLimit = paginationControlsDiv ? parseInt(paginationControlsDiv.querySelector('#limitPerPage').value) : <?php echo $limit_per_page; ?>;
@@ -706,12 +667,7 @@ const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
 			const currentLimit = paginationControlsDiv ? parseInt(paginationControlsDiv.querySelector('#limitPerPage').value) : <?php echo $limit_per_page; ?>;
 			loadPayments(1, currentSearchQuery, currentLimit, startDateInput.value, this.value); // Reset to page 1
 			updateExportLink(); // Update export link
-		});
-
-
-        // Initial display logic for pagination controls (if no data on first load)
-        // This ensures the pagination controls are hidden if there are no payments initially.
-        // This relies on the PHP's $total_payments value.
+		});  
         if (<?php echo json_encode($total_payments); ?> === 0) {
             if (paginationControlsDiv) {
                 paginationControlsDiv.style.display = 'none';

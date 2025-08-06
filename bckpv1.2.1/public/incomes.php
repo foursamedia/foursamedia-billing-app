@@ -446,9 +446,10 @@ require_once '../includes/header.php';
 </div>
 
 <?php
-// Include footer
-include_once '../includes/footer.php';
+require_once '../includes/footer.php';
 ?>
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

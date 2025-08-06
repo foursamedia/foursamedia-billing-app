@@ -593,7 +593,8 @@ table.dataTable {
 
 /* Customers */
 .text-success,
-.text-danger {
+.text-danger,
+.text-warning {
     display: flex;
     justify-content: center;
 }

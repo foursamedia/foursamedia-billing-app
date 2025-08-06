@@ -23,9 +23,10 @@ if ($result_users->num_rows > 0) {
     }
 }
 
-// Ambil data pembayaran yang akan diedit
+// Ambil data pembayaran yang akan diedit, TERMASUK input_record_date
 if ($payment_id > 0) {
-    $stmt_payment = $conn->prepare("SELECT id, user_id, amount, payment_date, description FROM payments WHERE id = ?");
+    // Mengubah kolom 'input_date' menjadi 'input_record_date' dalam SELECT statement
+    $stmt_payment = $conn->prepare("SELECT id, user_id, amount, payment_date, input_record_date, description FROM payments WHERE id = ?");
     $stmt_payment->bind_param("i", $payment_id);
     $stmt_payment->execute();
     $result_payment = $stmt_payment->get_result();
@@ -43,14 +44,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $payment) {
     $user_id = $_POST['user_id'];
     $amount = filter_var($_POST['amount'], FILTER_VALIDATE_FLOAT);
     $payment_date = trim($_POST['payment_date']);
+    $input_record_date = trim($_POST['input_record_date']); // Mengambil input_record_date dari POST
     $description = trim($_POST['description']);
     // input_by_user_id tidak diubah saat edit, hanya saat add
 
-    if (empty($user_id) || $amount === false || $amount <= 0 || empty($payment_date) || empty($description)) {
+    // Validasi semua field, termasuk input_record_date
+    if (empty($user_id) || $amount === false || $amount <= 0 || empty($payment_date) || empty($input_record_date) || empty($description)) {
         $error_message = "Semua field harus diisi dengan benar (jumlah harus angka positif).";
     } else {
-        $stmt_update = $conn->prepare("UPDATE payments SET user_id = ?, amount = ?, payment_date = ?, description = ? WHERE id = ?");
-        $stmt_update->bind_param("idssi", $user_id, $amount, $payment_date, $description, $payment_id);
+        // Memperbarui query UPDATE untuk menyertakan input_record_date
+        $stmt_update = $conn->prepare("UPDATE payments SET user_id = ?, amount = ?, payment_date = ?, input_record_date = ?, description = ? WHERE id = ?");
+        // Menyesuaikan bind_param: 's' tambahan untuk input_record_date
+        $stmt_update->bind_param("idsssi", $user_id, $amount, $payment_date, $input_record_date, $description, $payment_id);
 
         if ($stmt_update->execute()) {
             header("Location: manage_payments.php?status=success_edit");
@@ -102,6 +107,11 @@ require_once '../includes/header.php';
                 <div class="mb-3">
                     <label for="payment_date" class="form-label">Tanggal Pembayaran</label>
                     <input type="date" class="form-control" id="payment_date" name="payment_date" required value="<?php echo htmlspecialchars($_POST['payment_date'] ?? $payment['payment_date']); ?>">
+                </div>
+                <!-- Perubahan: Field Tanggal Input Bayar (input_record_date) -->
+                <div class="mb-3">
+                    <label for="input_record_date" class="form-label">Tanggal Input Catatan</label>
+                    <input type="date" class="form-control" id="input_record_date" name="input_record_date" required value="<?php echo htmlspecialchars($_POST['input_record_date'] ?? (isset($payment['input_record_date']) ? date('Y-m-d', strtotime($payment['input_record_date'])) : '')); ?>">
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Deskripsi</label>
