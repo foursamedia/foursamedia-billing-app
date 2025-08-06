@@ -190,7 +190,7 @@ $title = "Daftar Pengeluaran";
 
 // Include header (yang juga akan meng-include sidebar dan HTML pembuka)
 // Pastikan header.php Anda memiliki logika untuk menampilkan $success_message dan $error_message
-require_once '../includes/header.php';
+
 ?>
 <div class="d-flex" id="wrapper">
     <?php
@@ -203,7 +203,7 @@ require_once '../includes/header.php';
     ?>
 
     <div id="page-content-wrapper" class="flex-grow-1 mx-2 mx-lg-4 py-lg-4">
-        <header class="mb-4 d-flex justify-content-between align-items-center">
+        <header class="mb-4 mt-3 d-flex justify-content-between align-items-center flex-column flex-lg-row gap-3">
             <h1 class="display-5 mb-0">Daftar Pengeluaran</h1>
             <a href="add_expense.php" class="btn btn-danger">Tambah Pengeluaran Baru</a>
         </header>
@@ -222,45 +222,47 @@ require_once '../includes/header.php';
         <?php endif; ?>
         <div class="card mb-4">
             <div class="card-body">
-                <form action="expenses.php" method="GET" class="row mb-3 align-items-end">
-                    <div class="col-md-3">
-                        <label for="monthSelect" class="form-label">Bulan</label>
-                        <select class="form-select" id="monthSelect" name="month" onchange="this.form.submit()">
-                            <?php
-                            $months = [
-                                '01' => 'Januari',
-                                '02' => 'Februari',
-                                '03' => 'Maret',
-                                '04' => 'April',
-                                '05' => 'Mei',
-                                '06' => 'Juni',
-                                '07' => 'Juli',
-                                '08' => 'Agustus',
-                                '09' => 'September',
-                                '10' => 'Oktober',
-                                '11' => 'November',
-                                '12' => 'Desember'
-                            ];
-                            foreach ($months as $num => $name) {
-                                echo "<option value=\"$num\"" . ($selected_month == $num ? ' selected' : '') . ">$name</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="yearSelect" class="form-label">Tahun</label>
-                        <select class="form-select" id="yearSelect" name="year" onchange="this.form.submit()">
-                            <?php
-                            $current_year_option = (int)date('Y');
-                            for ($y = $current_year_option; $y >= $current_year_option - 4; $y--) {
-                                echo "<option value=\"$y\"" . ($selected_year == $y ? ' selected' : '') . ">$y</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="searchInput" class="form-label">Cari Deskripsi / User</label>
-                        <input type="text" id="searchInput" name="search" class="form-control" placeholder="Cari deskripsi atau user..." value="<?php echo htmlspecialchars($search_query); ?>">
+                <form action="expenses.php" method="GET" class="d-flex flex-column flex-lg-row mb-3 align-items-start align-items-lg-end gap-4">
+                    <div class="d-flex flex-column flex-lg-row w-100 gap-4">
+                        <div class="col-12 col-md-3">
+                            <label for="monthSelect" class="form-label">Bulan</label>
+                            <select class="form-select" id="monthSelect" name="month" onchange="this.form.submit()">
+                                <?php
+                                $months = [
+                                    '01' => 'Januari',
+                                    '02' => 'Februari',
+                                    '03' => 'Maret',
+                                    '04' => 'April',
+                                    '05' => 'Mei',
+                                    '06' => 'Juni',
+                                    '07' => 'Juli',
+                                    '08' => 'Agustus',
+                                    '09' => 'September',
+                                    '10' => 'Oktober',
+                                    '11' => 'November',
+                                    '12' => 'Desember'
+                                ];
+                                foreach ($months as $num => $name) {
+                                    echo "<option value=\"$num\"" . ($selected_month == $num ? ' selected' : '') . ">$name</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-2">
+                            <label for="yearSelect" class="form-label">Tahun</label>
+                            <select class="form-select" id="yearSelect" name="year" onchange="this.form.submit()">
+                                <?php
+                                $current_year_option = (int)date('Y');
+                                for ($y = $current_year_option; $y >= $current_year_option - 4; $y--) {
+                                    echo "<option value=\"$y\"" . ($selected_year == $y ? ' selected' : '') . ">$y</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label for="searchInput" class="form-label">Cari Deskripsi / User</label>
+                            <input type="text" id="searchInput" name="search" class="form-control" placeholder="Cari deskripsi atau user..." value="<?php echo htmlspecialchars($search_query); ?>">
+                        </div>
                     </div>
                     <div class="col-md-auto">
                         <button type="submit" class="btn btn-primary">Filter / Cari</button>
@@ -268,7 +270,7 @@ require_once '../includes/header.php';
                     </div>
                 </form>
                 <div class="row mt-3">
-                    <div class="col-12 text-end">
+                    <div class="col-12 text-lg-end">
                         <p class="h4 text-primary mb-0">Total Pengeluaran Global: Rp<?php echo number_format($total_expenses_global, 0, ',', '.'); ?></p>
                     </div>
                 </div>
@@ -312,20 +314,22 @@ require_once '../includes/header.php';
                     <?php if (!empty($expenses)): ?>
                         <?php foreach ($expenses as $expense): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($expense['id']); ?></td>
-                                <td><?php echo htmlspecialchars(date('d-m-Y', strtotime($expense['expense_date']))); ?></td>
-                                <td><?php echo htmlspecialchars($expense['description']); ?></td>
-                                <td>Rp<?php echo number_format($expense['amount'], 2, ',', '.'); ?></td>
-                                <td><?php echo htmlspecialchars($expense['input_by_username']); ?></td>
-                                <td class="text-end">
-                                    <a href="edit_expense.php?id=<?php echo htmlspecialchars($expense['id']); ?>" class="btn btn-sm btn-info" title="Edit Pengeluaran"><i class="bi bi-pencil-fill"></i></a>
-                                    <a href="expenses.php?action=delete&id=<?php echo htmlspecialchars($expense['id']); ?>&month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&search=<?php echo htmlspecialchars($search_query); ?>&sort_by=<?php echo htmlspecialchars($sort_by); ?>&sort_order=<?php echo htmlspecialchars($sort_order); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus pengeluaran ini?');" title="Hapus Pengeluaran"><i class="bi bi-trash-fill"></i></a>
+                                <td data-label="ID"><?php echo htmlspecialchars($expense['id']); ?></td>
+                                <td data-label="Tanggal"><?php echo htmlspecialchars(date('d-m-Y', strtotime($expense['expense_date']))); ?></td>
+                                <td data-label="Deskripsi"><?php echo htmlspecialchars($expense['description']); ?></td>
+                                <td data-label="Jumlah">Rp<?php echo number_format($expense['amount'], 2, ',', '.'); ?></td>
+                                <td data-label="Dicatat Oleh"><?php echo htmlspecialchars($expense['input_by_username']); ?></td>
+                                <td data-label="Aksi" class="text-end">
+                                    <div class="d-flex gap-2">
+                                        <a href="edit_expense.php?id=<?php echo htmlspecialchars($expense['id']); ?>" class="btn btn-sm btn-info" title="Edit Pengeluaran"><i class="bi bi-pencil-fill"></i></a>
+                                        <a href="expenses.php?action=delete&id=<?php echo htmlspecialchars($expense['id']); ?>&month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&search=<?php echo htmlspecialchars($search_query); ?>&sort_by=<?php echo htmlspecialchars($sort_by); ?>&sort_order=<?php echo htmlspecialchars($sort_order); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus pengeluaran ini?');" title="Hapus Pengeluaran"><i class="bi bi-trash-fill"></i></a>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="6">
+                            <td class="not-found" colspan="6">
                                 <div class="alert alert-info mb-0" role="alert">
                                     Tidak ada catatan pengeluaran yang ditemukan dengan kriteria tersebut.
                                 </div>
@@ -392,3 +396,7 @@ require_once '../includes/header.php';
 // Include footer
 include_once '../includes/footer.php';
 ?>
+
+</body>
+
+</html>

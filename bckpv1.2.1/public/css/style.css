@@ -705,6 +705,17 @@ table th a {
         align-items: center;
     }
 
+    .table-responsive table.table td.not-found {
+        /* text-align: left !important; */
+        padding: 0 4px !important;
+        position: relative;
+        border: none;
+        font-size: 12px !important;
+        line-break: anywhere;
+        display: flex;
+        align-items: center;
+    }
+
     .table-responsive table.table tr#customer td {
         /* text-align: left !important; */
         padding-left: 130px !important;

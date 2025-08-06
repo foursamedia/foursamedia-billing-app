@@ -391,12 +391,12 @@ require_once '../includes/header.php';
                     ?>
                         <?php foreach ($incomes as $income): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($income['id']); ?></td>
-                                <td><?php echo htmlspecialchars(date('d-m-Y', strtotime($income['income_date']))); ?></td>
-                                <td><?php echo htmlspecialchars($income['description']); ?></td>
-                                <td>Rp<?php echo number_format($income['amount'], 2, ',', '.'); ?></td>
-                                <td><?php echo htmlspecialchars($income['input_by_username']); ?></td>
-                                <td class="text-end">
+                                <td data-label="ID"><?php echo htmlspecialchars($income['id']); ?></td>
+                                <td data-label="Tanggal"><?php echo htmlspecialchars(date('d-m-Y', strtotime($income['income_date']))); ?></td>
+                                <td data-label="Deskripsi"><?php echo htmlspecialchars($income['description']); ?></td>
+                                <td data-label="Jumlah">Rp<?php echo number_format($income['amount'], 2, ',', '.'); ?></td>
+                                <td data-label="Dicatat Oleh"><?php echo htmlspecialchars($income['input_by_username']); ?></td>
+                                <td data-label="Aksi" class="text-end">
                                     <a href="edit_income.php?id=<?php echo htmlspecialchars($income['id']); ?>" class="btn btn-sm btn-info" title="Edit Pemasukan"><i class="bi bi-pencil-fill"></i></a>
                                     <a href="incomes.php?action=delete&id=<?php echo htmlspecialchars($income['id']); ?>&month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&search=<?php echo htmlspecialchars($search_query); ?>&sort_by=<?php echo htmlspecialchars($sort_by); ?>&sort_order=<?php echo htmlspecialchars($sort_order); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus pemasukan ini?');" title="Hapus Pemasukan"><i class="bi bi-trash-fill"></i></a>
                                 </td>
