@@ -62,7 +62,7 @@ require_once '../includes/functions.php';
 <body>
 
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light border-bottom px-3 px-lg-4">
         <div class="container-fluid p-0 d-flex flex-row ">
             <div class="collapse navbar-collapse d-flex flex-row" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto">

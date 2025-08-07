@@ -222,7 +222,7 @@ $title = "Daftar Pengeluaran";
         <?php endif; ?>
         <div class="card mb-4">
             <div class="card-body">
-                <form action="expenses.php" method="GET" class="d-flex flex-column flex-lg-row mb-3 align-items-start align-items-lg-end gap-4">
+                <form action="expenses.php" method="GET" class="d-flex flex-column flex-lg-row mb-3 align-items-center align-items-lg-end gap-4">
                     <div class="d-flex flex-column flex-lg-row w-100 gap-4">
                         <div class="col-12 col-md-3">
                             <label for="monthSelect" class="form-label">Bulan</label>
@@ -271,80 +271,72 @@ $title = "Daftar Pengeluaran";
                 </form>
                 <div class="row mt-3">
                     <div class="col-12 text-lg-end">
-                        <p class="h4 text-primary mb-0">Total Pengeluaran Global: Rp<?php echo number_format($total_expenses_global, 0, ',', '.'); ?></p>
+                        <h6 class="text-primary text-center text-lg-end mb-0">Total Pengeluaran Global: Rp<?php echo number_format($total_expenses_global, 0, ',', '.'); ?></h6>
                     </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="myTable" class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th id="ID">ID</th>
+                                <th>
+                                    <a href="?month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=expense_date&sort_order=<?php echo ($sort_by == 'expense_date' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
+                                        Tanggal
+
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="?month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=description&sort_order=<?php echo ($sort_by == 'description' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
+                                        Deskripsi
+                                    </a>
+                                </th>
+
+                                <th>
+                                    <a href="?month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=amount&sort_order=<?php echo ($sort_by == 'amount' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
+                                        Jumlah
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="?month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=input_by_username&sort_order=<?php echo ($sort_by == 'input_by_username' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
+                                        Dicatat Oleh
+                                    </a>
+                                </th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($expenses)): ?>
+                                <?php foreach ($expenses as $expense): ?>
+                                    <tr>
+                                        <td class="text-start" data-label="ID"><?php echo (string) htmlspecialchars($expense['id']); ?></td>
+                                        <td data-label="Tanggal"><?php echo htmlspecialchars(date('d-m-Y', strtotime($expense['expense_date']))); ?></td>
+                                        <td data-label="Deskripsi"><?php echo htmlspecialchars($expense['description']); ?></td>
+                                        <td data-label="Jumlah">Rp<?php echo number_format($expense['amount'], 2, ',', '.'); ?></td>
+                                        <td data-label="Dicatat Oleh"><?php echo htmlspecialchars($expense['input_by_username']); ?></td>
+                                        <td data-label="Aksi" class="text-end">
+                                            <div class="d-flex gap-2">
+                                                <a href="edit_expense.php?id=<?php echo htmlspecialchars($expense['id']); ?>" class="btn btn-sm btn-info" title="Edit Pengeluaran"><i class="bi bi-pencil-fill"></i></a>
+                                                <a href="expenses.php?action=delete&id=<?php echo htmlspecialchars($expense['id']); ?>&month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&search=<?php echo htmlspecialchars($search_query); ?>&sort_by=<?php echo htmlspecialchars($sort_by); ?>&sort_order=<?php echo htmlspecialchars($sort_order); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus pengeluaran ini?');" title="Hapus Pengeluaran"><i class="bi bi-trash-fill"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td class="not-found" colspan="6">
+                                        <div class="alert alert-info mb-0" role="alert">
+                                            Tidak ada catatan pengeluaran yang ditemukan dengan kriteria tersebut.
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        <!-- <style>
-            #ID .dt-column-header {
-                display: flex;
-                flex-direction: row;
-            }
 
-            #ID .dt-column-title {
-                flex-grow: 0;
-            }
-        </style> -->
-        <div class="table-responsive">
-            <table id="myTable" class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th id="ID">ID</th>
-                        <th>
-                            <a href="?month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=expense_date&sort_order=<?php echo ($sort_by == 'expense_date' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
-                                Tanggal
 
-                            </a>
-                        </th>
-                        <th>
-                            <a href="?month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=description&sort_order=<?php echo ($sort_by == 'description' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
-                                Deskripsi
-                            </a>
-                        </th>
-
-                        <th>
-                            <a href="?month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=amount&sort_order=<?php echo ($sort_by == 'amount' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
-                                Jumlah
-                            </a>
-                        </th>
-                        <th>
-                            <a href="?month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=input_by_username&sort_order=<?php echo ($sort_by == 'input_by_username' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
-                                Dicatat Oleh
-                            </a>
-                        </th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($expenses)): ?>
-                        <?php foreach ($expenses as $expense): ?>
-                            <tr>
-                                <td class="text-start" data-label="ID"><?php echo (string) htmlspecialchars($expense['id']); ?></td>
-                                <td data-label="Tanggal"><?php echo htmlspecialchars(date('d-m-Y', strtotime($expense['expense_date']))); ?></td>
-                                <td data-label="Deskripsi"><?php echo htmlspecialchars($expense['description']); ?></td>
-                                <td data-label="Jumlah">Rp<?php echo number_format($expense['amount'], 2, ',', '.'); ?></td>
-                                <td data-label="Dicatat Oleh"><?php echo htmlspecialchars($expense['input_by_username']); ?></td>
-                                <td data-label="Aksi" class="text-end">
-                                    <div class="d-flex gap-2">
-                                        <a href="edit_expense.php?id=<?php echo htmlspecialchars($expense['id']); ?>" class="btn btn-sm btn-info" title="Edit Pengeluaran"><i class="bi bi-pencil-fill"></i></a>
-                                        <a href="expenses.php?action=delete&id=<?php echo htmlspecialchars($expense['id']); ?>&month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&search=<?php echo htmlspecialchars($search_query); ?>&sort_by=<?php echo htmlspecialchars($sort_by); ?>&sort_order=<?php echo htmlspecialchars($sort_order); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus pengeluaran ini?');" title="Hapus Pengeluaran"><i class="bi bi-trash-fill"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td class="not-found" colspan="6">
-                                <div class="alert alert-info mb-0" role="alert">
-                                    Tidak ada catatan pengeluaran yang ditemukan dengan kriteria tersebut.
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
 
     </div>
 </div>

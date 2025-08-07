@@ -109,7 +109,7 @@ body {
     /* Akan mengisi sisa ruang yang tersedia */
     width: 100%;
     /* Penting untuk responsivitas */
-    background-color: #f4f6f9;
+    background-color: transparent;
     display: flex;
     /* Mengatur layout vertikal untuk navbar, konten, footer */
     flex-direction: column;
@@ -620,6 +620,9 @@ table th a {
     justify-content: space-between;
 }
 
+div.dt-container div.dt-layout-table>div {
+    padding: 0 !important;
+}
 
 
 
@@ -651,7 +654,7 @@ table th a {
 
     .notification-badge {
         transform: translate(6px, 4px) !important;
-        top: 0 !important;
+        top: 8px !important;
         right: 0 !important;
         border-radius: 20px !important;
         background: red;
@@ -753,7 +756,7 @@ table th a {
     }
 
     .table-responsive.manage-user table.table #incomesTableBody td {
-        padding-left: 0 !important;
+        /* padding-left: 0 !important; */
         width: 100% !important;
     }
 

@@ -1,4 +1,4 @@
-<footer class="bg-light mt-auto py-4">
+<footer class="mt-auto py-4">
     <div class="container text-center">
         <p class="mb-0">© 2023 FOURSAMEDIA. All rights reserved.</p>
     </div>
@@ -108,6 +108,8 @@
 <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
 
 <script>
+    $.fn.dataTable.ext.errMode = 'none';
+
     new DataTable('#myTable', {
         searching: false,
         columnDefs: [{
@@ -115,5 +117,20 @@
                 type: "string"
             } // Kolom ID di index ke-0
         ]
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const alertCell = document.querySelector('td.not-found');
+        const alertBox = alertCell?.querySelector('.alert.alert-info.mb-0');
+
+        if (alertBox && alertBox.offsetParent !== null) {
+            document.querySelectorAll('td').forEach(td => {
+                if (!td.classList.contains('not-found')) {
+                    td.style.display = 'none';
+                }
+            });
+        }
     });
 </script>

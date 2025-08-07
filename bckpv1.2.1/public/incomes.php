@@ -199,7 +199,7 @@ if ($is_ajax_request) {
                 <td><?php echo htmlspecialchars($income['description']); ?></td>
                 <td>Rp<?php echo number_format($income['amount'], 2, ',', '.'); ?></td>
                 <td><?php echo htmlspecialchars($income['input_by_username']); ?></td>
-                <td class="text-end">
+                <td class="text-end d-flex gap-3">
                     <a href="edit_income.php?id=<?php echo htmlspecialchars($income['id']); ?>" class="btn btn-sm btn-info" title="Edit Pemasukan"><i class="bi bi-pencil-fill"></i></a>
                     <a href="incomes.php?action=delete&id=<?php echo htmlspecialchars($income['id']); ?>&month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&search=<?php echo htmlspecialchars($search_query); ?>&sort_by=<?php echo htmlspecialchars($sort_by); ?>&sort_order=<?php echo htmlspecialchars($sort_order); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus pemasukan ini?');" title="Hapus Pemasukan"><i class="bi bi-trash-fill"></i></a>
                 </td>
@@ -287,7 +287,7 @@ require_once '../includes/header.php';
     ?>
 
     <div id="page-content-wrapper" class="flex-grow-1 mx-2 mx-lg-4 py-lg-4">
-        <div class="d-flex justify-content-between align-items-center flex-column flex-lg-row gap-3 m-4 mx-lg-0 mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-column flex-lg-row gap-3 mt-3 mx-lg-0 mb-4">
             <h1 class="display-5 mb-0">Daftar Pemasukan</h1>
             <a href="add_income.php" class="btn btn-success">
                 <i class="bi bi-plus-lg me-2"></i>Tambah Pemasukan Baru
@@ -303,12 +303,12 @@ require_once '../includes/header.php';
 
         <div class="card mb-4">
             <div class="card-body">
-                <div class="row mb-3 align-items-end">
-                    <div class="d-flex flex-column flex-lg-row align-items-center align-items-md-end justify-content-between gap-2">
-                        <div class="d-flex col-12 col-md-10 gap-lg-4 flex-column flex-lg-row">
-                            <div class="col-md-3">
+                <div class="row align-items-end">
+                    <form action="incomes.php" method="GET" class="d-flex flex-column flex-lg-row mb-3 align-items-center align-items-lg-end gap-4">
+                        <div class="d-flex flex-column flex-lg-row w-100 gap-4">
+                            <div class="col-12 col-md-3">
                                 <label for="monthSelect" class="form-label">Bulan</label>
-                                <select class="form-select" id="monthSelect">
+                                <select class="form-select" id="monthSelect" name="month" onchange="this.form.submit()">
                                     <?php
                                     $months = [
                                         '01' => 'Januari',
@@ -330,118 +330,89 @@ require_once '../includes/header.php';
                                     ?>
                                 </select>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-12 col-md-2">
                                 <label for="yearSelect" class="form-label">Tahun</label>
-                                <select class="form-select" id="yearSelect">
+                                <select class="form-select" id="yearSelect" name="year" onchange="this.form.submit()">
                                     <?php
                                     $current_year_option = (int)date('Y');
-                                    for ($y = $current_year_option; $y >= $current_year_option - 5; $y--) {
+                                    for ($y = $current_year_option; $y >= $current_year_option - 4; $y--) {
                                         echo "<option value=\"$y\"" . ($selected_year == $y ? ' selected' : '') . ">$y</option>";
                                     }
                                     ?>
                                 </select>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-12 col-md-4">
                                 <label for="searchInput" class="form-label">Cari Deskripsi / User</label>
-                                <input type="text" id="searchInput" class="form-control" placeholder="Cari deskripsi atau user..." value="<?php echo htmlspecialchars($search_query); ?>">
+                                <input type="text" id="searchInput" name="search" class="form-control" placeholder="Cari deskripsi atau user..." value="<?php echo htmlspecialchars($search_query); ?>">
                             </div>
                         </div>
-                        <div class="d-flex flex-1">
-                            <div class="col-md-auto">
-                                <button id="filterSearchButton" class="btn btn-primary">Filter / Cari</button>
-                                <button id="resetButton" class="btn btn-secondary">Reset</button>
-                            </div>
+                        <div class="col-md-auto">
+                            <button type="submit" class="btn btn-primary">Filter / Cari</button>
+                            <a href="expenses.php" class="btn btn-secondary">Reset</a>
                         </div>
+                    </form>
+                </div>
+                <div class="row">
+                    <div class="col-12 text-center text-lg-end">
+                        <h6 class=" text-primary mb-0">Total Pemasukan Global: Rp<span id="totalGlobalIncome"><?php echo number_format($total_incomes_global, 0, ',', '.'); ?></span></h6>
                     </div>
                 </div>
-                <div class="row mt-3">
-                    <div class="col-12 text-center text-lg-end">
-                        <p class="h4 text-primary mb-0">Total Pemasukan Global: Rp<span id="totalGlobalIncome"><?php echo number_format($total_incomes_global, 0, ',', '.'); ?></span></p>
-                    </div>
+                <div class="table-responsive manage-user">
+                    <table id="myTable" class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th class="sortable" data-sort-by="income_date" data-sort-order="<?php echo ($sort_by == 'income_date' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
+                                    Tanggal
+                                    <?php if ($sort_by == 'income_date'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
+                                </th>
+                                <th class="sortable" data-sort-by="description" data-sort-order="<?php echo ($sort_by == 'description' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
+                                    Deskripsi
+                                    <?php if ($sort_by == 'description'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
+                                </th>
+                                <th class="sortable" data-sort-by="amount" data-sort-order="<?php echo ($sort_by == 'amount' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
+                                    Jumlah
+                                    <?php if ($sort_by == 'amount'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
+                                </th>
+                                <th class="sortable" data-sort-by="input_by_username" data-sort-order="<?php echo ($sort_by == 'input_by_username' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
+                                    Dicatat Oleh
+                                    <?php if ($sort_by == 'input_by_username'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
+                                </th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incomesTableBody">
+                            <?php if (!empty($incomes)): // Populate initially for non-AJAX request 
+                            ?>
+                                <?php foreach ($incomes as $income): ?>
+                                    <tr>
+                                        <td data-label="ID"><?php echo htmlspecialchars($income['id']); ?></td>
+                                        <td data-label="Tanggal"><?php echo htmlspecialchars(date('d-m-Y', strtotime($income['income_date']))); ?></td>
+                                        <td data-label="Deskripsi"><?php echo htmlspecialchars($income['description']); ?></td>
+                                        <td data-label="Jumlah">Rp<?php echo number_format($income['amount'], 2, ',', '.'); ?></td>
+                                        <td data-label="Dicatat Oleh"><?php echo htmlspecialchars($income['input_by_username']); ?></td>
+                                        <td data-label="Aksi" class="text-end d-flex gap-2">
+                                            <a href="edit_income.php?id=<?php echo htmlspecialchars($income['id']); ?>" class="btn btn-sm btn-info" title="Edit Pemasukan"><i class="bi bi-pencil-fill"></i></a>
+                                            <a href="incomes.php?action=delete&id=<?php echo htmlspecialchars($income['id']); ?>&month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&search=<?php echo htmlspecialchars($search_query); ?>&sort_by=<?php echo htmlspecialchars($sort_by); ?>&sort_order=<?php echo htmlspecialchars($sort_order); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus pemasukan ini?');" title="Hapus Pemasukan"><i class="bi bi-trash-fill"></i></a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td class="not-found" colspan="6">
+                                        <div class="alert alert-info text-center mb-0" role="alert">
+                                            Tidak ada catatan pemasukan yang ditemukan dengan kriteria tersebut.
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <div class="table-responsive manage-user">
-            <table id="myTable" class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th class="sortable" data-sort-by="income_date" data-sort-order="<?php echo ($sort_by == 'income_date' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
-                            Tanggal
-                            <?php if ($sort_by == 'income_date'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
-                        </th>
-                        <th class="sortable" data-sort-by="description" data-sort-order="<?php echo ($sort_by == 'description' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
-                            Deskripsi
-                            <?php if ($sort_by == 'description'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
-                        </th>
-                        <th class="sortable" data-sort-by="amount" data-sort-order="<?php echo ($sort_by == 'amount' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
-                            Jumlah
-                            <?php if ($sort_by == 'amount'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
-                        </th>
-                        <th class="sortable" data-sort-by="input_by_username" data-sort-order="<?php echo ($sort_by == 'input_by_username' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
-                            Dicatat Oleh
-                            <?php if ($sort_by == 'input_by_username'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
-                        </th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="incomesTableBody">
-                    <?php if (!empty($incomes)): // Populate initially for non-AJAX request 
-                    ?>
-                        <?php foreach ($incomes as $income): ?>
-                            <tr>
-                                <td data-label="ID"><?php echo htmlspecialchars($income['id']); ?></td>
-                                <td data-label="Tanggal"><?php echo htmlspecialchars(date('d-m-Y', strtotime($income['income_date']))); ?></td>
-                                <td data-label="Deskripsi"><?php echo htmlspecialchars($income['description']); ?></td>
-                                <td data-label="Jumlah">Rp<?php echo number_format($income['amount'], 2, ',', '.'); ?></td>
-                                <td data-label="Dicatat Oleh"><?php echo htmlspecialchars($income['input_by_username']); ?></td>
-                                <td data-label="Aksi" class="text-end">
-                                    <a href="edit_income.php?id=<?php echo htmlspecialchars($income['id']); ?>" class="btn btn-sm btn-info" title="Edit Pemasukan"><i class="bi bi-pencil-fill"></i></a>
-                                    <a href="incomes.php?action=delete&id=<?php echo htmlspecialchars($income['id']); ?>&month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&search=<?php echo htmlspecialchars($search_query); ?>&sort_by=<?php echo htmlspecialchars($sort_by); ?>&sort_order=<?php echo htmlspecialchars($sort_order); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus pemasukan ini?');" title="Hapus Pemasukan"><i class="bi bi-trash-fill"></i></a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td class="not-found" colspan="6">
-                                <div class="alert alert-info text-center mb-0" role="alert">
-                                    Tidak ada catatan pemasukan yang ditemukan dengan kriteria tersebut.
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-        <div id="paginationControls">
-            <nav aria-label="Page navigation" class="mt-3">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item <?php echo ($current_page <= 1) ? 'disabled' : ''; ?>">
-                        <a class="page-link" href="#" data-page="<?php echo $current_page - 1; ?>">Previous</a>
-                    </li>
-                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <li class="page-item <?php echo ($i == $current_page) ? 'active' : ''; ?>">
-                            <a class="page-link" href="#" data-page="<?php echo $i; ?>"><?php echo $i; ?></a>
-                        </li>
-                    <?php endfor; ?>
-                    <li class="page-item <?php echo ($current_page >= $total_pages) ? 'disabled' : ''; ?>">
-                        <a class="page-link" href="#" data-page="<?php echo $current_page + 1; ?>">Next</a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="d-flex justify-content-end align-items-center mt-2">
-                <label for="limitPerPage" class="form-label me-2 mb-0">Tampilkan:</label>
-                <select class="form-select form-select-sm w-auto" id="limitPerPage">
-                    <?php foreach ($limit_per_page_options as $option): ?>
-                        <option value="<?php echo $option; ?>" <?php echo ($option == $limit_per_page) ? 'selected' : ''; ?>>
-                            <?php echo $option; ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <span class="ms-2 text-muted">dari <span id="totalIncomesCount"><?php echo $total_incomes; ?></span> data</span>
-            </div>
-        </div>
+
     </div>
 </div>
 
