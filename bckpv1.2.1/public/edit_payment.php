@@ -72,55 +72,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $payment) {
 require_once '../includes/header.php';
 ?>
 
-<header class="mb-4">
-    <h1 class="display-5">Edit Pembayaran</h1>
-    <a href="manage_payments.php" class="btn btn-secondary">Kembali ke Manajemen Pembayaran</a>
-</header>
 
-<div class="card mb-4">
-    <div class="card-body">
-        <?php if ($error_message): ?>
-            <div class="alert alert-danger"><?php echo htmlspecialchars($error_message); ?></div>
-        <?php elseif (!$payment): ?>
-            <div class="alert alert-warning">Pembayaran tidak ditemukan atau ID tidak valid.</div>
-        <?php else: ?>
-            <form action="edit_payment.php?id=<?php echo htmlspecialchars($payment_id); ?>" method="POST">
-                <div class="mb-3">
-                    <label for="user_id" class="form-label">Pelanggan</label>
-                    <select class="form-select" id="user_id" name="user_id" required>
-                        <option value="">Pilih Pelanggan</option>
-                        <?php foreach ($users as $user): ?>
-                            <option value="<?php echo htmlspecialchars($user['id']); ?>"
-                                <?php
-                                // Pilih user berdasarkan data pembayaran atau data POST jika ada error form
-                                echo ((isset($_POST['user_id']) && $_POST['user_id'] == $user['id']) || (!isset($_POST['user_id']) && $payment['user_id'] == $user['id'])) ? 'selected' : '';
-                                ?>>
-                                <?php echo htmlspecialchars($user['name']) . " (" . htmlspecialchars($user['email']) . ")"; ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="amount" class="form-label">Jumlah Pembayaran (Rp)</label>
-                    <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0.01" required value="<?php echo htmlspecialchars($_POST['amount'] ?? $payment['amount']); ?>">
-                </div>
-                <div class="mb-3">
-                    <label for="payment_date" class="form-label">Tanggal Pembayaran</label>
-                    <input type="date" class="form-control" id="payment_date" name="payment_date" required value="<?php echo htmlspecialchars($_POST['payment_date'] ?? $payment['payment_date']); ?>">
-                </div>
-                <!-- Perubahan: Field Tanggal Input Bayar (input_record_date) -->
-                <div class="mb-3">
-                    <label for="input_record_date" class="form-label">Tanggal Input Catatan</label>
-                    <input type="date" class="form-control" id="input_record_date" name="input_record_date" required value="<?php echo htmlspecialchars($_POST['input_record_date'] ?? (isset($payment['input_record_date']) ? date('Y-m-d', strtotime($payment['input_record_date'])) : '')); ?>">
-                </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">Deskripsi</label>
-                    <textarea class="form-control" id="description" name="description" rows="3" required><?php echo htmlspecialchars($_POST['description'] ?? $payment['description']); ?></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Perbarui Pembayaran</button>
-            </form>
-        <?php endif; ?>
+<div class="d-flex" id="wrapper">
+    <?php
+    $sidebar_path = '../includes/sidebar.php';
+    if (file_exists($sidebar_path)) {
+        include $sidebar_path;
+    } else {
+        echo "<div style='color: red; padding: 20px;'>Sidebar not found at: " . htmlspecialchars($sidebar_path) . "</div>";
+    }
+    ?>
+
+
+    <div id="page-content-wrapper" class="flex-grow-1 mx-2 mx-lg-4 py-lg-4">
+        <div class="d-flex justify-content-between align-items-center flex-column flex-lg-row gap-3 m-4 mx-lg-0 mb-4">
+            <h1 class="display-5">Edit Pembayaran</h1>
+            <a href="manage_payments.php" class="btn btn-secondary">Kembali ke Manajemen Pembayaran</a>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <?php if ($error_message): ?>
+                    <div class="alert alert-danger"><?php echo htmlspecialchars($error_message); ?></div>
+                <?php elseif (!$payment): ?>
+                    <div class="alert alert-warning">Pembayaran tidak ditemukan atau ID tidak valid.</div>
+                <?php else: ?>
+                    <form action="edit_payment.php?id=<?php echo htmlspecialchars($payment_id); ?>" method="POST">
+                        <div class="mb-3">
+                            <label for="user_id" class="form-label">Pelanggan</label>
+                            <select class="form-select" id="user_id" name="user_id" required>
+                                <option value="">Pilih Pelanggan</option>
+                                <?php foreach ($users as $user): ?>
+                                    <option value="<?php echo htmlspecialchars($user['id']); ?>"
+                                        <?php
+                                        // Pilih user berdasarkan data pembayaran atau data POST jika ada error form
+                                        echo ((isset($_POST['user_id']) && $_POST['user_id'] == $user['id']) || (!isset($_POST['user_id']) && $payment['user_id'] == $user['id'])) ? 'selected' : '';
+                                        ?>>
+                                        <?php echo htmlspecialchars($user['name']) . " (" . htmlspecialchars($user['email']) . ")"; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Jumlah Pembayaran (Rp)</label>
+                            <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0.01" required value="<?php echo htmlspecialchars($_POST['amount'] ?? $payment['amount']); ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="payment_date" class="form-label">Tanggal Pembayaran</label>
+                            <input type="date" class="form-control" id="payment_date" name="payment_date" required value="<?php echo htmlspecialchars($_POST['payment_date'] ?? $payment['payment_date']); ?>">
+                        </div>
+                        <!-- Perubahan: Field Tanggal Input Bayar (input_record_date) -->
+                        <div class="mb-3">
+                            <label for="input_record_date" class="form-label">Tanggal Input Catatan</label>
+                            <input type="date" class="form-control" id="input_record_date" name="input_record_date" required value="<?php echo htmlspecialchars($_POST['input_record_date'] ?? (isset($payment['input_record_date']) ? date('Y-m-d', strtotime($payment['input_record_date'])) : '')); ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Deskripsi</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required><?php echo htmlspecialchars($_POST['description'] ?? $payment['description']); ?></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Perbarui Pembayaran</button>
+                    </form>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
+
+
 </div>
 <?php
 // Sertakan footer

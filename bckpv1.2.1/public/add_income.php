@@ -6,7 +6,7 @@ require_once '../includes/functions.php';
 check_login();
 // Peran yang diizinkan untuk menambah pemasukan
 // Sesuaikan dengan kebutuhan Anda, sebelumnya Anda menggunakan 'superadmin', 'admin', 'finance'
-check_role(['superadmin', 'admin', 'finance']); 
+check_role(['superadmin', 'admin', 'finance']);
 
 $title = "Tambah Pemasukan Baru";
 $error_message = '';
@@ -31,11 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Masukkan data ke database
         // Ubah nama tabel dari 'expenses' ke 'incomes' dan kolom 'expense_date' ke 'income_date'
         $stmt_insert = $conn->prepare("INSERT INTO incomes (description, amount, income_date, input_by_user_id) VALUES (?, ?, ?, ?)");
-        
+
         if ($stmt_insert) {
             // "sdsi" -> string (description), double (amount), string (income_date), integer (input_by_user_id)
             $stmt_insert->bind_param("sdsi", $description, $amount, $income_date, $input_by_user_id);
-            
+
             if ($stmt_insert->execute()) {
                 $_SESSION['success_message'] = "Pemasukan berhasil ditambahkan.";
                 header("Location: incomes.php"); // Redirect ke halaman daftar pemasukan
@@ -52,16 +52,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 include_once '../includes/header.php'; // Menggunakan include_once
-include_once '../includes/sidebar.php'; // Menggunakan include_once
 ?>
 
-<div class="main-content">
-    <div class="container-fluid">
-        <header class="mb-4">
+<div class="d-flex" id="wrapper">
+    <?php
+    $sidebar_path = '../includes/sidebar.php';
+    if (file_exists($sidebar_path)) {
+        include $sidebar_path;
+    } else {
+        echo "<div style='color: red; padding: 20px;'>Sidebar not found at: " . htmlspecialchars($sidebar_path) . "</div>";
+    }
+    ?>
+
+    <div id="page-content-wrapper" class="flex-grow-1 mx-2 mx-lg-4 py-lg-4">
+        <div class="d-flex justify-content-between align-items-center flex-column flex-lg-row gap-3 m-4 mx-lg-0 mb-4">
             <h1 class="display-5">Tambah Pemasukan Baru</h1>
             <a href="incomes.php" class="btn btn-secondary">Kembali ke Daftar Pemasukan</a>
-        </header>
-
+        </div>
         <div class="card mb-4">
             <div class="card-body">
                 <?php if ($error_message): ?>
@@ -85,6 +92,10 @@ include_once '../includes/sidebar.php'; // Menggunakan include_once
             </div>
         </div>
     </div>
+
+
+</div>
+</div>
 </div>
 
 <?php

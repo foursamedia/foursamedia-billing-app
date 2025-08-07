@@ -784,3 +784,14 @@ div.dt-container div.dt-layout-table>div {
 /* .account .dropdown-toggle::after {
     display: none;
 } */
+
+table.dataTable td {
+    border-bottom: none;
+}
+
+
+
+table.table.dataTable {
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 18px !important;
+}

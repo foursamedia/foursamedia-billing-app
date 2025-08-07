@@ -178,7 +178,7 @@ if ($is_ajax_request) {
                 <td data-label="Jumlah">Rp<?php echo number_format($payment['amount'], 0, ',', '.'); ?></td>
                 <td data-label="Tanggal Pembayaran"><?php echo htmlspecialchars($payment['payment_date']); ?></td>
                 <td data-label="Tanggal Input"><?php echo htmlspecialchars($payment['input_record_date']); ?></td>
-				<td data-label="Deskripsi"><?php echo htmlspecialchars($payment['description']); ?></td>
+                <td data-label="Deskripsi"><?php echo htmlspecialchars($payment['description']); ?></td>
                 <td data-label="Diinput Oleh">
                     <?php
                     if (!empty($payment['inputter_name'])) {
@@ -188,10 +188,10 @@ if ($is_ajax_request) {
                     }
                     ?>
                 </td>
-                <td data-label="Aksi">
-                    <a href="edit_payment.php?id=<?php echo htmlspecialchars($payment['payment_id']); ?>" class="btn btn-warning btn-sm">Edit</a>
+                <td data-label="Aksi" class="d-flex flex-column align-items-start gap-2">
+                    <a href="edit_payment.php?id=<?php echo htmlspecialchars($payment['payment_id']); ?>" class="btn btn-warning btn-sm w-100" style="max-width: 140px;">Edit</a>
                     <?php if ($_SESSION['role_name'] === 'superadmin' || $_SESSION['role_name'] === 'admin'): ?>
-                        <a href="delete_payment.php?id=<?php echo htmlspecialchars($payment['payment_id']); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pembayaran ini?');">Hapus</a>
+                        <a href="delete_payment.php?id=<?php echo htmlspecialchars($payment['payment_id']); ?>" class="btn btn-danger btn-sm w-100" style="max-width: 140px;" onclick="return confirm('Apakah Anda yakin ingin menghapus pembayaran ini?');">Hapus</a>
                     <?php endif; ?>
                 </td>
             </tr>
@@ -206,67 +206,9 @@ if ($is_ajax_request) {
                 </div>
             </td>
         </tr>
-    <?php
+<?php
     }
     $tbody_content = ob_get_clean();
-
-    // Render pagination HTML for AJAX
-    ob_start();
-
-    // Define max pages to display for AJAX response
-    $max_display_pages = 5;
-    ?>
-    <nav aria-label="Page navigation" class="mt-3">
-        <ul class="pagination justify-content-center">
-            <li class="page-item <?php echo ((int)$current_page <= 1) ? 'disabled' : ''; ?>">
-                <a class="page-link" href="#" data-page="<?php echo max(1, (int)$current_page - 1); ?>">«</a>
-            </li>
-
-            <?php
-            // Calculate start and end pages for display
-            $start_page = max(1, (int)$current_page - floor($max_display_pages / 2));
-            $end_page = min((int)$total_pages, $start_page + $max_display_pages - 1);
-
-            // Adjust start_page if we are at the very end of pages
-            if ($end_page - $start_page < $max_display_pages - 1) {
-                $start_page = max(1, (int)$end_page - $max_display_pages + 1);
-            }
-
-            // Show ellipsis at the beginning if not starting from page 1
-            if ($start_page > 1) {
-                echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-            }
-
-            // --- CORRECTED LOOP FOR AJAX RESPONSE ---
-            for ($i = (int)$start_page; $i <= (int)$end_page; $i++) {
-                echo "<li class='page-item " . (($i == (int)$current_page) ? 'active' : '') . "'><a class='page-link' href='#' data-page='" . (int)$i . "'>" . (int)$i . "</a></li>";
-            }
-            // --- END CORRECTED LOOP FOR AJAX RESPONSE ---
-
-            // Show ellipsis at the end if not ending at total_pages
-            if ($end_page < (int)$total_pages) {
-                echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-            }
-            ?>
-
-            <li class="page-item <?php echo ((int)$current_page >= (int)$total_pages) ? 'disabled' : ''; ?>">
-                <a class="page-link" href="#" data-page="<?php echo min((int)$total_pages, (int)$current_page + 1); ?>">»</a>
-            </li>
-        </ul>
-    </nav>
-    <div class="d-flex justify-content-end align-items-center mt-2">
-        <label for="limitPerPage" class="form-label me-2 mb-0">Tampilkan:</label>
-        <select class="form-select form-select-sm w-auto" id="limitPerPage">
-            <?php foreach ($limit_per_page_options as $option): ?>
-                <option value="<?php echo $option; ?>" <?php echo ($option == $limit_per_page) ? 'selected' : ''; ?>>
-                    <?php echo $option; ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <span class="ms-2 text-muted">dari <span id="totalPaymentsCount"><?php echo $total_payments; ?></span> data</span>
-    </div>
-<?php
-    $pagination_content = ob_get_clean();
 
     // Return all data as JSON
     echo json_encode([
@@ -313,200 +255,141 @@ require_once '../includes/header.php';
             <div class="card-body">
                 <div class="row g-3 align-items-center">
                     <div class="col-md-12">
-                       <div class="row g-3 align-items-center">
-				<div class="col-md-4">
-					<div class="input-group">
-						<input type="text" class="form-control" id="searchInput" name="search" placeholder="Cari Pelanggan, Deskripsi, atau Penginput..." value="<?php echo htmlspecialchars($search_query); ?>">
-							<span class="input-group-text"><i class="bi bi-search"></i></span>
-							</div>
-						</div>
-					<div class="col-md-8 d-flex flex-column flex-md-row gap-2">
-						<div class="input-group">
-							<span class="input-group-text">Dari Tanggal</span>
-							<input type="date" class="form-control" id="startDateInput" name="start_date" value="<?php echo htmlspecialchars($_GET['start_date'] ?? ''); ?>">
-						</div>
-						<div class="input-group">
-							<span class="input-group-text">Sampai Tanggal</span>
-							<input type="date" class="form-control" id="endDateInput" name="end_date" value="<?php echo htmlspecialchars($_GET['end_date'] ?? ''); ?>">
-						</div>			
-					</div>
-					<button type="button" id="resetFilterBtn" class="btn btn-secondary flex-shrink-0">
-						<i class="bi bi-arrow-counterclockwise"></i> Reset
-					</button>
-					<a href="#" id="exportExcelBtn" class="btn btn-success flex-shrink-0">
-						<i class="bi bi-file-earmark-excel"></i> Export Excel </a>					
-			</div>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="searchInput" name="search" placeholder="Cari Pelanggan, Deskripsi, atau Penginput..." value="<?php echo htmlspecialchars($search_query); ?>">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                </div>
+                            </div>
+                            <div class="col-md-8 d-flex flex-column flex-md-row gap-2">
+                                <div class="input-group">
+                                    <span class="input-group-text">Dari Tanggal</span>
+                                    <input type="date" class="form-control" id="startDateInput" name="start_date" value="<?php echo htmlspecialchars($_GET['start_date'] ?? ''); ?>">
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-text">Sampai Tanggal</span>
+                                    <input type="date" class="form-control" id="endDateInput" name="end_date" value="<?php echo htmlspecialchars($_GET['end_date'] ?? ''); ?>">
+                                </div>
+                            </div>
+                            <div class="d-flex flexrow justify-content-center justify-content-lg-end align-items-center gap-2">
+
+                                <a href="#" id="exportExcelBtn" class="btn btn-success flex-shrink-0">
+                                    <i class="bi bi-file-earmark-excel"></i> Export Excel </a>
+                                <button type="button" id="resetFilterBtn" class="btn btn-secondary flex-shrink-0">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Reset
+                                </button>
+                            </div>
+                        </div>
                     </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="myTable" class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th data-label="ID">ID</th>
+                                <th data-label="Pelanggan">Pelanggan</th>
+                                <th data-label="Jumlah">Jumlah</th>
+                                <th data-label="Tanggal Pembayaran">Tanggal Pembayaran</th>
+                                <th data-label="Tanggal Pembayaran">Input Pembayaran</th>
+                                <th data-label="Deskripsi">Deskripsi</th>
+                                <th data-label="Diinput Oleh">Diinput Oleh</th>
+                                <th data-label="Aksi">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsTableBody">
+                            <?php // Tbody content is filled by PHP on initial load, or by JS via Ajax
+                            if (!empty($payments)): // Only iterate if $payments array is not empty
+                            ?>
+                                <?php foreach ($payments as $payment): ?>
+                                    <tr>
+                                        <td data-label="ID"><?php echo htmlspecialchars($payment['payment_id']); ?></td>
+                                        <td data-label="Pelanggan"><?php echo htmlspecialchars($payment['customer_name']); ?></td>
+                                        <td data-label="Jumlah">Rp<?php echo number_format($payment['amount'], 0, ',', '.'); ?></td>
+                                        <td data-label="Tanggal Pembayaran"><?php echo htmlspecialchars($payment['payment_date']); ?></td>
+                                        <td data-label="Input Pembayaran"><?php echo htmlspecialchars($payment['input_record_date']); ?></td>
+                                        <td data-label="Deskripsi"><?php echo htmlspecialchars($payment['description']); ?></td>
+                                        <td data-label="Diinput Oleh">
+                                            <?php
+                                            if (!empty($payment['inputter_name'])) {
+                                                echo htmlspecialchars($payment['inputter_name']) . " (" . htmlspecialchars($payment['inputter_email']) . ")";
+                                            } else {
+                                                echo "Tidak Diketahui"; // If input_by_user_id is NULL
+                                            }
+                                            ?>
+                                        </td>
+                                        <td data-label="Aksi" class="d-flex flex-column align-items-start gap-2">
+                                            <a href="edit_payment.php?id=<?php echo htmlspecialchars($payment['payment_id']); ?>" class="btn btn-warning btn-sm w-100" style="max-width: 140px;">Edit</a>
+                                            <?php if ($_SESSION['role_name'] === 'superadmin'): ?>
+                                                <a href="delete_payment.php?id=<?php echo htmlspecialchars($payment['payment_id']); ?>" class="btn btn-danger btn-sm w-100" style="max-width: 140px;" onclick="return confirm('Apakah Anda yakin ingin menghapus pembayaran ini?');">Hapus</a>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td class="not-found" data-label="null" colspan="7">
+                                        <div class="alert alert-info mb-0" role="alert">
+                                            Tidak ada data pembayaran yang ditemukan.
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        <div class="table-responsive">
-            <table id="paymentsTable" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th data-label="ID">ID</th>
-                        <th data-label="Pelanggan">Pelanggan</th>
-                        <th data-label="Jumlah">Jumlah</th>
-                        <th data-label="Tanggal Pembayaran">Tanggal Pembayaran</th>
-			<th data-label="Tanggal Pembayaran">Input Pembayaran</th>
-                        <th data-label="Deskripsi">Deskripsi</th>
-                        <th data-label="Diinput Oleh">Diinput Oleh</th>
-                        <th data-label="Aksi">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="paymentsTableBody">
-                    <?php // Tbody content is filled by PHP on initial load, or by JS via Ajax
-                    if (!empty($payments)): // Only iterate if $payments array is not empty
-                    ?>
-                        <?php foreach ($payments as $payment): ?>
-                            <tr>
-                                <td data-label="ID"><?php echo htmlspecialchars($payment['payment_id']); ?></td>
-                                <td data-label="Pelanggan"><?php echo htmlspecialchars($payment['customer_name']); ?></td>
-                                <td data-label="Jumlah">Rp<?php echo number_format($payment['amount'], 0, ',', '.'); ?></td>
-                                <td data-label="Tanggal Pembayaran"><?php echo htmlspecialchars($payment['payment_date']); ?></td>
-				<td data-label="Input Pembayaran"><?php echo htmlspecialchars($payment['input_record_date']); ?></td>
-                                <td data-label="Deskripsi"><?php echo htmlspecialchars($payment['description']); ?></td>
-                                <td data-label="Diinput Oleh">
-                                    <?php
-                                    if (!empty($payment['inputter_name'])) {
-                                        echo htmlspecialchars($payment['inputter_name']) . " (" . htmlspecialchars($payment['inputter_email']) . ")";
-                                    } else {
-                                        echo "Tidak Diketahui"; // If input_by_user_id is NULL
-                                    }
-                                    ?>
-                                </td>
-                                <td data-label="Aksi">
-                                    <a href="edit_payment.php?id=<?php echo htmlspecialchars($payment['payment_id']); ?>" class="btn btn-warning btn-sm">Edit</a>
-                                    <?php if ($_SESSION['role_name'] === 'superadmin' ): ?>
-                                        <a href="delete_payment.php?id=<?php echo htmlspecialchars($payment['payment_id']); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pembayaran ini?');">Hapus</a>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td class="not-found" data-label="null" colspan="7">
-                                <div class="alert alert-info mb-0" role="alert">
-                                    Tidak ada data pembayaran yang ditemukan.
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
 
-        <div id="paginationControls" class="d-flex flex-column flex-lg-row-reverse align-items-center justify-content-between">
-            <?php
-            // Define max pages to display for initial page load
-            $max_display_pages = 5;
-            ?>
-            <nav aria-label="Page navigation" class="mt-3">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item <?php echo ((int)$current_page <= 1) ? 'disabled' : ''; ?>">
-                        <a class="page-link" href="#" data-page="<?php echo max(1, (int)$current_page - 1); ?>">«</a>
-                    </li>
 
-                    <?php
-                    // Calculate start and end pages for display
-                    $start_page = max(1, (int)$current_page - floor($max_display_pages / 2));
-                    $end_page = min((int)$total_pages, $start_page + $max_display_pages - 1);
-
-                    // Adjust start_page if we are at the very end of pages
-                    if ($end_page - $start_page < $max_display_pages - 1) {
-                        $start_page = max(1, (int)$end_page - $max_display_pages + 1);
-                    }
-
-                    // Show ellipsis at the beginning if not starting from page 1
-                    if ($start_page > 1) {
-                        echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                    }
-
-                    // --- CORRECTED LOOP FOR INITIAL PAGE LOAD ---
-                    for ($i = (int)$start_page; $i <= (int)$end_page; $i++) {
-                        echo "<li class='page-item " . (($i == (int)$current_page) ? 'active' : '') . "'><a class='page-link' href='#' data-page='" . (int)$i . "'>" . (int)$i . "</a></li>";
-                    }
-                    // --- END CORRECTED LOOP FOR INITIAL PAGE LOAD ---
-
-                    // Show ellipsis at the end if not ending at total_pages
-                    if ($end_page < (int)$total_pages) {
-                        echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                    }
-                    ?>
-
-                    <li class="page-item <?php echo ((int)$current_page >= (int)$total_pages) ? 'disabled' : ''; ?>">
-                        <a class="page-link" href="#" data-page="<?php echo min((int)$total_pages, (int)$current_page + 1); ?>">»</a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="d-flex justify-content-end align-items-center mt-2">
-                <label for="limitPerPage" class="form-label me-2 mb-0">Tampilkan:</label>
-                <select class="form-select form-select-sm w-auto" id="limitPerPage">
-                    <?php foreach ($limit_per_page_options as $option): ?>
-                        <option value="<?php echo $option; ?>" <?php echo ($option == $limit_per_page) ? 'selected' : ''; ?>>
-                            <?php echo $option; ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <span class="ms-2 text-muted">dari <span id="totalPaymentsCount"><?php echo $total_payments; ?></span> data</span>
-            </div>
-        </div>
     </div>
 </div>
 
-<?php
-if (file_exists('../includes/footer.php')) {
-    require_once '../includes/footer.php';
-} else {
-    // Consider logging this error in a real application
-    error_log("ERROR: Footer file not found at ../includes/footer.php in manage_payments.php");
-    echo "<div style='color: red; padding: 20px;'>Footer not found. Please check your file path.</div>";
-}
-?>
+<?php require_once '../includes/footer.php'; ?>
 
 <script>
-const exportExcelBtn = document.getElementById('exportExcelBtn');
-const startDateInput = document.getElementById('startDateInput'); // NEW
-const endDateInput = document.getElementById('endDateInput'); // NEW
-const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
+    const exportExcelBtn = document.getElementById('exportExcelBtn');
+    const startDateInput = document.getElementById('startDateInput'); // NEW
+    const endDateInput = document.getElementById('endDateInput'); // NEW
+    const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
 
     function updateExportLink() {
-    const currentSearchQuery = searchInput.value;
-    const currentStartDate = startDateInput.value; // NEW
-    const currentEndDate = endDateInput.value; // NEW
+        const currentSearchQuery = searchInput.value;
+        const currentStartDate = startDateInput.value; // NEW
+        const currentEndDate = endDateInput.value; // NEW
 
-    let exportUrl = 'export_payments.php?';
-    const params = [];
+        let exportUrl = 'export_payments.php?';
+        const params = [];
 
-    if (currentSearchQuery) {
-        params.push(`search=${encodeURIComponent(currentSearchQuery)}`);
-    }
-    if (currentStartDate) {
-        params.push(`start_date=${encodeURIComponent(currentStartDate)}`);
-    }
-    if (currentEndDate) {
-        params.push(`end_date=${encodeURIComponent(currentEndDate)}`);
-    }
+        if (currentSearchQuery) {
+            params.push(`search=${encodeURIComponent(currentSearchQuery)}`);
+        }
+        if (currentStartDate) {
+            params.push(`start_date=${encodeURIComponent(currentStartDate)}`);
+        }
+        if (currentEndDate) {
+            params.push(`end_date=${encodeURIComponent(currentEndDate)}`);
+        }
 
-    exportUrl += params.join('&');
+        exportUrl += params.join('&');
 
-    if (exportExcelBtn) {
-        exportExcelBtn.href = exportUrl;
+        if (exportExcelBtn) {
+            exportExcelBtn.href = exportUrl;
+        }
     }
-}
     // Call updateExportLink initially when the page loads
     updateExportLink();
     // Modify the searchInput event listener to also update the export link
-		searchInput.addEventListener('input', function() {
-		clearTimeout(searchTimeout);
-		searchTimeout = setTimeout(() => {
-			const currentSearchQuery = this.value;
-			const currentLimit = paginationControlsDiv ? parseInt(paginationControlsDiv.querySelector('#limitPerPage').value) : <?php echo $limit_per_page; ?>;
-			// Pass start_date and end_date to loadPayments
-			loadPayments(1, currentSearchQuery, currentLimit, startDateInput.value, endDateInput.value); // MODIFIED
-			updateExportLink();
-		}, 300);
-	});
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const currentSearchQuery = this.value;
+            const currentLimit = paginationControlsDiv ? parseInt(paginationControlsDiv.querySelector('#limitPerPage').value) : <?php echo $limit_per_page; ?>;
+            // Pass start_date and end_date to loadPayments
+            loadPayments(1, currentSearchQuery, currentLimit, startDateInput.value, endDateInput.value); // MODIFIED
+            updateExportLink();
+        }, 300);
+    });
 
     document.addEventListener('DOMContentLoaded', function() {
         const paymentsTableBody = document.getElementById('paymentsTableBody');
@@ -516,77 +399,78 @@ const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
 
         let searchTimeout;
 
-	function loadPayments(page = 1, searchQuery = '', limit = <?php echo $limit_per_page; ?>, startDate = '', endDate = '') { // ADD startDate, endDate
-			// Add a loading indicator to the table body
-			paymentsTableBody.innerHTML = `<tr><td colspan="7" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div> Memuat data...</td></tr>`;
-			// Disable pagination controls during load
-			if (paginationControlsDiv) {
-				paginationControlsDiv.querySelectorAll('.page-link, #limitPerPage').forEach(el => el.setAttribute('disabled', 'disabled'));
-			}
+        function loadPayments(page = 1, searchQuery = '', limit = <?php echo $limit_per_page; ?>, startDate = '', endDate = '') { // ADD startDate, endDate
+            // Add a loading indicator to the table body
+            paymentsTableBody.innerHTML = `<tr><td colspan="7" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div> Memuat data...</td></tr>`;
+            // Disable pagination controls during load
+            if (paginationControlsDiv) {
+                paginationControlsDiv.querySelectorAll('.page-link, #limitPerPage').forEach(el => el.setAttribute('disabled', 'disabled'));
+            }
 
-			let url = `manage_payments.php?page=${page}&limit=${limit}`;
-			if (searchQuery) {
-				url += `&search=${encodeURIComponent(searchQuery)}`;
-			}
-			// Add date parameters to the URL
-			if (startDate) { // NEW
-				url += `&start_date=${encodeURIComponent(startDate)}`;
-			}
-			if (endDate) { // NEW
-				url += `&end_date=${encodeURIComponent(endDate)}`;
-			}
+            let url = `manage_payments.php?page=${page}&limit=${limit}`;
+            if (searchQuery) {
+                url += `&search=${encodeURIComponent(searchQuery)}`;
+            }
+            // Add date parameters to the URL
+            if (startDate) { // NEW
+                url += `&start_date=${encodeURIComponent(startDate)}`;
+            }
+            if (endDate) { // NEW
+                url += `&end_date=${encodeURIComponent(endDate)}`;
+            }
 
-			fetch(url, {
-				headers: {
-					'X-Requested-With': 'XMLHttpRequest'
-				}
-			})
-			.then(response => {
-				if (!response.ok) {
-					throw new Error('Network response was not ok: ' + response.statusText);
-				}
-				return response.json();
-			})
-			.then(data => {
-				paymentsTableBody.innerHTML = data.html;
-				if (paginationControlsDiv) {
-					paginationControlsDiv.innerHTML = data.pagination_html;
-					if (totalPaymentsCountSpan) {
-						totalPaymentsCountSpan.textContent = data.total_payments;
-					}
+            fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    paymentsTableBody.innerHTML = data.html;
+                    if (paginationControlsDiv) {
+                        paginationControlsDiv.innerHTML = data.pagination_html;
+                        if (totalPaymentsCountSpan) {
+                            totalPaymentsCountSpan.textContent = data.total_payments;
+                        }
 
-					paginationControlsDiv.querySelectorAll('.page-link, #limitPerPage').forEach(el => el.removeAttribute('disabled'));
+                        paginationControlsDiv.querySelectorAll('.page-link, #limitPerPage').forEach(el => el.removeAttribute('disabled'));
 
-					attachEventListeners();
+                        attachEventListeners();
 
-					if (data.total_payments === 0) {
-						paginationControlsDiv.style.display = 'none';
-					} else {
-						paginationControlsDiv.style.display = 'block';
-					}
-				}
-			})
-			.catch(error => {
-				console.error('Error fetching payments:', error);
-				paymentsTableBody.innerHTML = '<tr><td class="not-found" colspan="7" class="text-danger">Terjadi kesalahan saat memuat data pembayaran.</td></tr>';
-				if (paginationControlsDiv) {
-					paginationControlsDiv.style.display = 'none';
-					paginationControlsDiv.querySelectorAll('.page-link, #limitPerPage').forEach(el => el.removeAttribute('disabled'));
-				}
-			});
-		}		
-		// Event listener for Reset Filter button
-			if (resetFilterBtn) { // Check if the button exists
-				resetFilterBtn.addEventListener('click', function() {
-					searchInput.value = ''; // Clear general search input
-					startDateInput.value = ''; // Clear start date input
-					endDateInput.value = ''; // Clear end date input
-					
-					// Reload payments with no search/date parameters (resetting to default page 1)
-					loadPayments(1, '', <?php echo $limit_per_page; ?>, '', '');
-					updateExportLink(); // Update export link after reset
-				});
-			}     
+                        if (data.total_payments === 0) {
+                            paginationControlsDiv.style.display = 'none';
+                        } else {
+                            paginationControlsDiv.style.display = 'block';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching payments:', error);
+                    paymentsTableBody.innerHTML = '<tr><td class="not-found" colspan="7" class="text-danger">Terjadi kesalahan saat memuat data pembayaran.</td></tr>';
+                    if (paginationControlsDiv) {
+                        paginationControlsDiv.style.display = 'none';
+                        paginationControlsDiv.querySelectorAll('.page-link, #limitPerPage').forEach(el => el.removeAttribute('disabled'));
+                    }
+                });
+        }
+        // Event listener for Reset Filter button
+        if (resetFilterBtn) { // Check if the button exists
+            resetFilterBtn.addEventListener('click', function() {
+                searchInput.value = ''; // Clear general search input
+                startDateInput.value = ''; // Clear start date input
+                endDateInput.value = ''; // Clear end date input
+
+                // Reload payments with no search/date parameters (resetting to default page 1)
+                loadPayments(1, '', <?php echo $limit_per_page; ?>, '', '');
+                updateExportLink(); // Update export link after reset
+            });
+        }
+
         function attachEventListeners() {
             // Re-attach listeners for pagination links
             document.querySelectorAll('#paginationControls .page-link').forEach(link => {
@@ -600,74 +484,77 @@ const resetFilterBtn = document.getElementById('resetFilterBtn'); // NEW
                 currentLimitSelect.removeEventListener('change', handleLimitChange);
                 currentLimitSelect.addEventListener('change', handleLimitChange);
             }
-        }		
-	function handleResetFilterClick() {
-			searchInput.value = ''; // Clear general search input
-			startDateInput.value = ''; // Clear start date input
-			endDateInput.value = ''; // Clear end date input
-			
-			// Reload payments with no search/date parameters (resetting to default page 1)
-			loadPayments(1, '', <?php echo $limit_per_page; ?>, '', '');
-			updateExportLink(); // Update export link after reset
-		}     
-        function handlePageClick(e) {
-			e.preventDefault();
-			const newPage = parseInt(this.dataset.page);
-			const currentSearchQuery = searchInput.value;
-			const currentLimit = parseInt(paginationControlsDiv.querySelector('#limitPerPage').value);
-			const currentStartDate = startDateInput.value; // NEW
-			const currentEndDate = endDateInput.value; // NEW
+        }
 
-			if (!isNaN(newPage) && newPage > 0) {
-				loadPayments(newPage, currentSearchQuery, currentLimit, currentStartDate, currentEndDate); // MODIFIED
-			}
-		}    
+        function handleResetFilterClick() {
+            searchInput.value = ''; // Clear general search input
+            startDateInput.value = ''; // Clear start date input
+            endDateInput.value = ''; // Clear end date input
+
+            // Reload payments with no search/date parameters (resetting to default page 1)
+            loadPayments(1, '', <?php echo $limit_per_page; ?>, '', '');
+            updateExportLink(); // Update export link after reset
+        }
+
+        function handlePageClick(e) {
+            e.preventDefault();
+            const newPage = parseInt(this.dataset.page);
+            const currentSearchQuery = searchInput.value;
+            const currentLimit = parseInt(paginationControlsDiv.querySelector('#limitPerPage').value);
+            const currentStartDate = startDateInput.value; // NEW
+            const currentEndDate = endDateInput.value; // NEW
+
+            if (!isNaN(newPage) && newPage > 0) {
+                loadPayments(newPage, currentSearchQuery, currentLimit, currentStartDate, currentEndDate); // MODIFIED
+            }
+        }
+
         function handleLimitChange() {
-			const newLimit = parseInt(this.value);
-			const currentSearchQuery = searchInput.value;
-			const currentStartDate = startDateInput.value; // NEW
-			const currentEndDate = endDateInput.value; // NEW
-			loadPayments(1, currentSearchQuery, newLimit, currentStartDate, currentEndDate); // MODIFIED
-		}
+            const newLimit = parseInt(this.value);
+            const currentSearchQuery = searchInput.value;
+            const currentStartDate = startDateInput.value; // NEW
+            const currentEndDate = endDateInput.value; // NEW
+            loadPayments(1, currentSearchQuery, newLimit, currentStartDate, currentEndDate); // MODIFIED
+        }
 
         // Event listener for search input with debounce to limit AJAX requests
         searchInput.addEventListener('input', function() {
-			clearTimeout(searchTimeout);
-			searchTimeout = setTimeout(() => {
-				const currentSearchQuery = this.value;
-				const currentLimit = paginationControlsDiv ? parseInt(paginationControlsDiv.querySelector('#limitPerPage').value) : <?php echo $limit_per_page; ?>;
-				// When searching, always reset to the first page (page 1)
-				loadPayments(1, currentSearchQuery, currentLimit, startDateInput.value, endDateInput.value); // MODIFIED
-				updateExportLink(); // Ensure export link is updated on search
-			}, 300); // 300ms debounce delay
-		});
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const currentSearchQuery = this.value;
+                const currentLimit = paginationControlsDiv ? parseInt(paginationControlsDiv.querySelector('#limitPerPage').value) : <?php echo $limit_per_page; ?>;
+                // When searching, always reset to the first page (page 1)
+                loadPayments(1, currentSearchQuery, currentLimit, startDateInput.value, endDateInput.value); // MODIFIED
+                updateExportLink(); // Ensure export link is updated on search
+            }, 300); // 300ms debounce delay
+        });
 
         // --- NEW ADDITION FOR INITIAL LOAD ---
-		if (!window.location.search.includes('page=') && !window.location.search.includes('search=') && !window.location.search.includes('limit=') && !window.location.search.includes('start_date=') && !window.location.search.includes('end_date=')) { // MODIFIED
-			loadPayments(1, '', <?php echo $limit_per_page; ?>, '', ''); // MODIFIED: Pass empty strings for dates
-		} else {
-			attachEventListeners();
-			if (totalPaymentsCountSpan) {
-				totalPaymentsCountSpan.textContent = <?php echo json_encode($total_payments); ?>;
-			}
-			// Call updateExportLink on initial load to ensure it's correct if dates are in URL
-			updateExportLink(); // NEW
-		}
+        if (!window.location.search.includes('page=') && !window.location.search.includes('search=') && !window.location.search.includes('limit=') && !window.location.search.includes('start_date=') && !window.location.search.includes('end_date=')) { // MODIFIED
+            loadPayments(1, '', <?php echo $limit_per_page; ?>, '', ''); // MODIFIED: Pass empty strings for dates
+        } else {
+            attachEventListeners();
+            if (totalPaymentsCountSpan) {
+                totalPaymentsCountSpan.textContent = <?php echo json_encode($total_payments); ?>;
+            }
+            // Call updateExportLink on initial load to ensure it's correct if dates are in URL
+            updateExportLink(); // NEW
+        }
         // --- END NEW ADDITION ---
-	// Event listeners for date inputs
-		startDateInput.addEventListener('change', function() { // Use 'change' for date inputs
-			const currentSearchQuery = searchInput.value;
-			const currentLimit = paginationControlsDiv ? parseInt(paginationControlsDiv.querySelector('#limitPerPage').value) : <?php echo $limit_per_page; ?>;
-			loadPayments(1, currentSearchQuery, currentLimit, this.value, endDateInput.value); // Reset to page 1
-			updateExportLink(); // Update export link
-		});
+        // Event listeners for date inputs
+        startDateInput.addEventListener('change', function() { // Use 'change' for date inputs
+            const currentSearchQuery = searchInput.value;
+            const currentLimit = paginationControlsDiv ? parseInt(paginationControlsDiv.querySelector('#limitPerPage').value) : <?php echo $limit_per_page; ?>;
+            loadPayments(1, currentSearchQuery, currentLimit, this.value, endDateInput.value); // Reset to page 1
+            updateExportLink(); // Update export link
+        });
 
-		endDateInput.addEventListener('change', function() { // Use 'change' for date inputs
-			const currentSearchQuery = searchInput.value;
-			const currentLimit = paginationControlsDiv ? parseInt(paginationControlsDiv.querySelector('#limitPerPage').value) : <?php echo $limit_per_page; ?>;
-			loadPayments(1, currentSearchQuery, currentLimit, startDateInput.value, this.value); // Reset to page 1
-			updateExportLink(); // Update export link
-		});  
+        endDateInput.addEventListener('change', function() { // Use 'change' for date inputs
+            const currentSearchQuery = searchInput.value;
+            const currentLimit = paginationControlsDiv ? parseInt(paginationControlsDiv.querySelector('#limitPerPage').value) : <?php echo $limit_per_page; ?>;
+            loadPayments(1, currentSearchQuery, currentLimit, startDateInput.value, this.value); // Reset to page 1
+            updateExportLink(); // Update export link
+        });
         if (<?php echo json_encode($total_payments); ?> === 0) {
             if (paginationControlsDiv) {
                 paginationControlsDiv.style.display = 'none';

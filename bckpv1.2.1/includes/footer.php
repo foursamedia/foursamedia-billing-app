@@ -112,13 +112,37 @@
 
     new DataTable('#myTable', {
         searching: false,
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json",
+            paginate: {
+                first: '«',
+                last: '»',
+                next: '›',
+                previous: '‹'
+            }
+        },
         columnDefs: [{
-                targets: 0,
-                type: "string"
-            } // Kolom ID di index ke-0
-        ]
+            targets: [0, 3, 4],
+            type: "string",
+        }, ],
     });
 </script>
+
+<script>
+    document.querySelectorAll('#myTable thead th').forEach(th => {
+        th.style.width = '100%';
+        th.style.whiteSpace = 'nowrap';
+        th.style.maxWidth = '10%';
+    });
+</script>
+
+<script>
+    new DataTable('#myTable', {
+        autoWidth: false
+    });
+</script>
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

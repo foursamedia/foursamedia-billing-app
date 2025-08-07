@@ -75,7 +75,6 @@ if ($stmt) {
         } else {
             $_SESSION['error_message'] = "Gagal menyiapkan query notifikasi (dinamis): " . $conn->error;
         }
-
     } else {
         // Jika role_id ada, pakai query asli
         $stmt->bind_param("ii", $user_id, $user_role_id);
@@ -88,8 +87,6 @@ if ($stmt) {
     } else if ($stmt) { // Jika execute gagal tapi prepare berhasil
         $_SESSION['error_message'] = "Gagal mengambil notifikasi: " . $stmt->error;
     }
-
-
 } else {
     $_SESSION['error_message'] = "Gagal menyiapkan query notifikasi: " . $conn->error;
 }
@@ -128,16 +125,25 @@ if (isset($_GET['mark_as_read']) && $_GET['mark_as_read'] === 'all') {
 require_once '../includes/header.php';
 ?>
 
-<div class="main-content">
-    <div class="container-fluid">
-        <header class="mb-4 d-flex justify-content-between align-items-center">
+<div class="d-flex" id="wrapper">
+    <?php
+    $sidebar_path = '../includes/sidebar.php';
+    if (file_exists($sidebar_path)) {
+        include $sidebar_path;
+    } else {
+        echo "<div style='color: red; padding: 20px;'>Sidebar not found at: " . htmlspecialchars($sidebar_path) . "</div>";
+    }
+    ?>
+
+    <div id="page-content-wrapper" class="flex-grow-1 mx-2 mx-lg-4 py-lg-4">
+        <div class="d-flex justify-content-between align-items-center flex-column flex-lg-row gap-3 m-4 mx-lg-0 mb-4">
             <h1 class="display-5 mb-0">Notifikasi Anda</h1>
             <?php if (!empty($notifications)): ?>
                 <a href="notifications.php?mark_as_read=all" class="btn btn-sm btn-outline-secondary" onclick="return confirm('Tandai semua notifikasi sebagai sudah dibaca?');">Tandai Semua Sudah Dibaca</a>
             <?php endif; ?>
-        </header>
 
-        <?php display_session_messages(); ?>
+            <?php display_session_messages(); ?>
+        </div>
 
         <div class="card shadow mb-4">
             <div class="card-body">
@@ -185,7 +191,7 @@ require_once '../includes/header.php';
                                             </small>
                                         </div>
                                         <?php if (!$notification['is_read']): ?>
-                                            <?php endif; ?>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -208,19 +214,26 @@ require_once '../includes/footer.php';
 <style>
     /* Custom styles untuk notifikasi agar lebih rapi */
     .text-muted-notification {
-        color: #6c757d !important; /* Warna abu-abu yang sedikit lebih gelap dari default muted */
+        color: #6c757d !important;
+        /* Warna abu-abu yang sedikit lebih gelap dari default muted */
     }
+
     .text-dark-notification {
-        color: #212529 !important; /* Warna teks gelap untuk notifikasi belum dibaca */
+        color: #212529 !important;
+        /* Warna teks gelap untuk notifikasi belum dibaca */
     }
+
     .list-group-item {
         transition: all 0.2s ease-in-out;
     }
+
     .list-group-item:hover {
         transform: translateY(-2px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
     }
-    .bg-light-subtle { /* Kelas bootstrap 5.3+ */
+
+    .bg-light-subtle {
+        /* Kelas bootstrap 5.3+ */
         background-color: var(--bs-light-bg-subtle) !important;
     }
 </style>

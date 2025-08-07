@@ -364,19 +364,16 @@ require_once '../includes/header.php';
                                 <th>ID</th>
                                 <th class="sortable" data-sort-by="income_date" data-sort-order="<?php echo ($sort_by == 'income_date' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
                                     Tanggal
-                                    <?php if ($sort_by == 'income_date'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
+
                                 </th>
                                 <th class="sortable" data-sort-by="description" data-sort-order="<?php echo ($sort_by == 'description' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
                                     Deskripsi
-                                    <?php if ($sort_by == 'description'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
                                 </th>
                                 <th class="sortable" data-sort-by="amount" data-sort-order="<?php echo ($sort_by == 'amount' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
                                     Jumlah
-                                    <?php if ($sort_by == 'amount'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
                                 </th>
                                 <th class="sortable" data-sort-by="input_by_username" data-sort-order="<?php echo ($sort_by == 'input_by_username' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
                                     Dicatat Oleh
-                                    <?php if ($sort_by == 'input_by_username'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
                                 </th>
                                 <th>Aksi</th>
                             </tr>
