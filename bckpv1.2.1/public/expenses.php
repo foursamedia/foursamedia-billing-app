@@ -276,35 +276,41 @@ $title = "Daftar Pengeluaran";
                 </div>
             </div>
         </div>
+        <!-- <style>
+            #ID .dt-column-header {
+                display: flex;
+                flex-direction: row;
+            }
 
+            #ID .dt-column-title {
+                flex-grow: 0;
+            }
+        </style> -->
         <div class="table-responsive">
             <table id="myTable" class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th id="ID">ID</th>
                         <th>
                             <a href="?month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=expense_date&sort_order=<?php echo ($sort_by == 'expense_date' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
                                 Tanggal
-                                <?php if ($sort_by == 'expense_date'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
+
                             </a>
                         </th>
                         <th>
                             <a href="?month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=description&sort_order=<?php echo ($sort_by == 'description' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
                                 Deskripsi
-                                <?php if ($sort_by == 'description'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
                             </a>
                         </th>
 
                         <th>
                             <a href="?month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=amount&sort_order=<?php echo ($sort_by == 'amount' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
                                 Jumlah
-                                <?php if ($sort_by == 'amount'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
                             </a>
                         </th>
                         <th>
                             <a href="?month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&page=<?php echo htmlspecialchars($current_page); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=input_by_username&sort_order=<?php echo ($sort_by == 'input_by_username' && $sort_order == 'ASC') ? 'DESC' : 'ASC'; ?>">
                                 Dicatat Oleh
-                                <?php if ($sort_by == 'input_by_username'): ?><i class="bi bi-arrow-<?php echo ($sort_order == 'ASC') ? 'up' : 'down'; ?>"></i><?php endif; ?>
                             </a>
                         </th>
                         <th>Aksi</th>
@@ -314,7 +320,7 @@ $title = "Daftar Pengeluaran";
                     <?php if (!empty($expenses)): ?>
                         <?php foreach ($expenses as $expense): ?>
                             <tr>
-                                <td data-label="ID"><?php echo htmlspecialchars($expense['id']); ?></td>
+                                <td class="text-start" data-label="ID"><?php echo (string) htmlspecialchars($expense['id']); ?></td>
                                 <td data-label="Tanggal"><?php echo htmlspecialchars(date('d-m-Y', strtotime($expense['expense_date']))); ?></td>
                                 <td data-label="Deskripsi"><?php echo htmlspecialchars($expense['description']); ?></td>
                                 <td data-label="Jumlah">Rp<?php echo number_format($expense['amount'], 2, ',', '.'); ?></td>
@@ -339,56 +345,7 @@ $title = "Daftar Pengeluaran";
                 </tbody>
             </table>
         </div>
-        <div id="paginationControls">
-            <nav aria-label="Page navigation" class="mt-3">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item <?php echo ($current_page <= 1) ? 'disabled' : ''; ?>">
-                        <a class="page-link" href="?page=<?php echo $current_page - 1; ?>&month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=<?php echo htmlspecialchars($sort_by); ?>&sort_order=<?php echo htmlspecialchars($sort_order); ?>">Previous</a>
-                    </li>
-                    <?php
-                    $start_page = max(1, $current_page - 2);
-                    $end_page = min($total_pages, $current_page + 2);
 
-                    if ($start_page > 1 && $end_page < $total_pages) {
-                        if ($current_page - $start_page < 2) {
-                            $end_page = min($total_pages, $end_page + (2 - ($current_page - $start_page)));
-                        }
-                        if ($end_page - $current_page < 2) {
-                            $start_page = max(1, $start_page - (2 - ($end_page - $current_page)));
-                        }
-                    }
-
-                    if ($start_page > 1) {
-                        echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                    }
-
-                    for ($i = $start_page; $i <= $end_page; $i++): ?>
-                        <li class="page-item <?php echo ($i == $current_page) ? 'active' : ''; ?>">
-                            <a class="page-link" href="?page=<?php echo $i; ?>&month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=<?php echo htmlspecialchars($sort_by); ?>&sort_order=<?php echo htmlspecialchars($sort_order); ?>"><?php echo $i; ?></a>
-                        </li>
-                    <?php endfor;
-
-                    if ($end_page < $total_pages) {
-                        echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                    }
-                    ?>
-                    <li class="page-item <?php echo ($current_page >= $total_pages) ? 'disabled' : ''; ?>">
-                        <a class="page-link" href="?page=<?php echo $current_page + 1; ?>&month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&limit=<?php echo htmlspecialchars($limit_per_page); ?>&sort_by=<?php echo htmlspecialchars($sort_by); ?>&sort_order=<?php echo htmlspecialchars($sort_order); ?>">Next</a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="d-flex justify-content-end align-items-center mt-2">
-                <label for="limitPerPage" class="form-label me-2 mb-0">Tampilkan:</label>
-                <select class="form-select form-select-sm w-auto" id="limitPerPage" onchange="window.location.href = `?page=1&limit=${this.value}&month=<?php echo htmlspecialchars($selected_month); ?>&year=<?php echo htmlspecialchars($selected_year); ?>&search=<?php echo htmlspecialchars($search_query); ?>&sort_by=<?php echo htmlspecialchars($sort_by); ?>&sort_order=<?php echo htmlspecialchars($sort_order); ?>`">
-                    <?php foreach ($limit_per_page_options as $option): ?>
-                        <option value="<?php echo $option; ?>" <?php echo ($option == $limit_per_page) ? 'selected' : ''; ?>>
-                            <?php echo $option; ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <span class="ms-2 text-muted">dari <?php echo $total_expenses; ?> data</span>
-            </div>
-        </div>
     </div>
 </div>
 
